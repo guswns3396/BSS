@@ -1,15 +1,15 @@
 class Hitter:
     def __init__(self, row):
         self.name = row['Player Name']
-        self.RHP = row["HPRHP"]
-        self.LHP = row["HPLHP"]
-        self.HPFlyball = row['HPFlyball']
-        self.HPPower = row['HPPower']
-        self.HPAvg = row['HPAvg']
-        self.HPFinese = row['HPFinese']
-        self.HPHome = row['HPHome']
-        self.HPAway = row['HPAway']
-        self.HPGroundball = row['HPGroundball']
+        self.RHP = float(row["HPRHP"])
+        self.LHP = float(row["HPLHP"])
+        self.HPFlyball = float(row['HPFlyball'])
+        self.HPPower = float(row['HPPower'])
+        self.HPAvg = float(row['HPAvg'])
+        self.HPFinese = float(row['HPFinese'])
+        self.HPHome = float(row['HPHome'])
+        self.HPAway = float(row['HPAway'])
+        self.HPGroundball = float(row['HPGroundball'])
 
         # TODO: save player to SQL Database
 
@@ -17,5 +17,5 @@ class Hitter:
 class Pitcher:
     def __init__(self, row):
         self.name = row['Player Name']
-        self.RHB = row["HPRHB"]
-        self.LHB = row["HPLHB"]
+        self.RHB = float(row["HPRHB"])
+        self.LHB = float(row["HPLHB"])
