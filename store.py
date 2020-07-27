@@ -1,4 +1,5 @@
 import csv
+import sys
 import mysql.connector
 
 USER = "root"
@@ -27,10 +28,10 @@ def establishConnection():
         else:
             print("Could not establish connection")
             print(err)
-        return None, None
+        sys.exit(1)
     except:
         print("Could not establish connection")
-        return None, None
+        sys.exit(1)
 
 def execute(cursor, sql, data):
     """
