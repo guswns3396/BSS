@@ -6,11 +6,12 @@ PW = input("password=")
 HOST = "localhost"
 DB = "players_db"
 
-def store(path):
+def storeHitters(path):
     """
-    given path to
-    :param path:
-    :return:
+    given path to csv containing stats of hitters,
+    store them into database
+    :param path: path to csv file containing stats of hitters
+    :return: None
     """
     # establish connection
     global USER
