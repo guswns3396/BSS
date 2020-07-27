@@ -1,14 +1,24 @@
 import csv
 import mysql.connector
 
+USER = "root"
+PW = input("password=")
+HOST = "localhost"
+DB = "players_db"
+
 def store(path):
+    """
+    given path to
+    :param path:
+    :return:
+    """
     # establish connection
-    user = "root"
-    pw = input("password=")
-    host = "localhost"
-    db = "players_db"
+    global USER
+    global PW
+    global HOST
+    global DB
     try:
-        cnx = mysql.connector.connect(user=user,password=pw,host=host,database=db)
+        cnx = mysql.connector.connect(user=USER,password=PW,host=HOST,database=DB)
         cursor = cnx.cursor()
     except mysql.connector.Error as err:
         if err.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
