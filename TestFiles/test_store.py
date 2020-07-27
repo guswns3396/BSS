@@ -3,7 +3,7 @@ import unittest
 import store
 
 class TestStore(unittest.TestCase):
-    def test_establishConnection_raisesErrorWhenWrongPassword(self):
+    def step1_establishConnection_raisesErrorWhenWrongPassword(self):
         print("Enter Incorrect Password")
         importlib.reload(store)
 
@@ -14,12 +14,12 @@ class TestStore(unittest.TestCase):
         importlib.reload(store)
         self.assertEqual(cm.exception.code, 1)
 
-    def test_establishConnection_establishesConnection(self):
+    def step1_establishConnection_establishesConnection(self):
         cnx, cursor = store.establishConnection()
 
         self.assertIsInstance(cursor, store.mysql.connector.cursor.MySQLCursor)
 
-    def test_execute_executesQuery(self):
+    def step2_execute_executesQuery(self):
         cnx, cursor = store.establishConnection()
         sql = "INSERT INTO hitters (name,rhp,lhp,hpflyball,hppower,hpavg,"
         sql += "hpfinesse,hphome,hpaway,hpgroundball)"
@@ -36,7 +36,7 @@ class TestStore(unittest.TestCase):
         cnx.close()
         self.assertEqual(results[0],("Test Player",))
 
-    def test_execute_raisesError(self):
+    def step2_execute_raisesError(self):
         cnx, cursor = store.establishConnection()
         sql = "this is a test"
         data = ()
@@ -47,6 +47,9 @@ class TestStore(unittest.TestCase):
         cursor.close()
         cnx.close()
         self.assertIsInstance(cm.exception, store.mysql.connector.Error)
+
+    def step3_closeConnection_commitsChange(self):
+        pass
 
     # def test_storeHitters_insertsIntoDatabase(self):
     #     importlib.reload(store)
@@ -60,6 +63,17 @@ class TestStore(unittest.TestCase):
     #
     #
     #     self.assertEqual(1,1)
+
+    def _steps(self):
+        for name in dir(self):
+            if name.startswith("step"):
+                yield name, getattr(self, name)
+    def test_steps(self):
+        for name, step in self._steps():
+            try:
+                step()
+            except Exception as e:
+                self.fail("{} failed ({} : {})".format(step,type(e),e))
 
 if __name__ == "__main__":
     unittest.main()
