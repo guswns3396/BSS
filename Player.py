@@ -11,9 +11,6 @@ class Hitter:
         self.HPAway = float(row['HPAway'])
         self.HPGroundball = float(row['HPGroundball'])
 
-        # TODO: save player to SQL Database
-
-
 class Pitcher:
     def __init__(self, row):
         self.name = row['Player Name']
