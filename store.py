@@ -6,21 +6,19 @@ PW = input("password=")
 HOST = "localhost"
 DB = "players_db"
 
-def storeHitters(path):
+def establishConnection():
     """
-    given path to csv containing stats of hitters,
-    store them into database
-    :param path: path to csv file containing stats of hitters
-    :return: None
+    establishes connection with the db
+    :return: connection & cursor objects
     """
-    # establish connection
     global USER
     global PW
     global HOST
     global DB
     try:
-        cnx = mysql.connector.connect(user=USER,password=PW,host=HOST,database=DB)
+        cnx = mysql.connector.connect(user=USER, password=PW, host=HOST, database=DB)
         cursor = cnx.cursor()
+        return cnx, cursor
     except mysql.connector.Error as err:
         if err.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
@@ -29,11 +27,49 @@ def storeHitters(path):
         else:
             print("Could not establish connection")
             print(err)
-        exit()
+        return None, None
+    except:
+        print("Could not establish connection")
+        return None, None
+
+def execute(cursor, sql, data):
+    """
+    executes the sql command
+    :param cursor: cursor object
+    :param sql: string for sql command
+    :param data: tuple for data
+    :return: None
+    """
+    try:
+        cursor.execute(sql, data)
+    except mysql.connector.Error:
+        print("Something went wrong executing SQL statement")
+        raise
+
+def closeConnection(cnx, cursor):
+    """
+    closes connection from db
+    :param cnx: cnx object
+    :param cursor: cursor object
+    :return: None
+    """
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+
+def storeHitters(pathToCSV):
+    """
+    given path to csv containing stats of hitters,
+    store them into database
+    :param path: path to csv file containing stats of hitters
+    :return: None
+    """
+    # establish connection
+    cnx, cursor = establishConnection()
 
     # open file & read & store as list of ordered dicts
     players = []
-    with open(path) as fh:
+    with open(pathToCSV) as fh:
         rd = csv.DictReader(fh, delimiter=',')
         for row in rd:
             players.append(row)
@@ -51,12 +87,6 @@ def storeHitters(path):
             player["HPFinesse"], player["HPHome"], player["HPAway"], \
             player["HPGroundball"]
                 )
-        try:
-            cursor.execute(sql, data)
-        except mysql.connector.Error:
-            print("Something went wrong executing SQL statement")
-            raise
+        execute(cursor, sql, data)
 
-    cnx.commit()
-    cursor.close()
-    cnx.close()
+    closeConnection(cnx, cursor)
