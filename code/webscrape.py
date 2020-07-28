@@ -74,7 +74,7 @@ def searchForTable(soup, id):
         for comment in comments:
             if id in comment:
                 table = comment
-                table = table[len("<!--"):-len("-->")]
+                table = table[len("<!--"):-len("-->")].strip()
                 table = BeautifulSoup(table, 'html.parser')
                 return table
         # data not found even in comments:
