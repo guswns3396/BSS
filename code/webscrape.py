@@ -66,11 +66,15 @@ def extractData(teams):
     """
     hitters, pitchers = [], []
     for team in teams:
+        print(team.name)
+        print("-"*20)
         for member in team.batting:
+            print(member.name)
             # extract necessary data
             page = requests.get(URL + member.endpoint)
             soup = BeautifulSoup(page.content, 'html.parser')
-            a = soup.find("a", string="162 Game Avg.")
+            table = soup.find(id="batting_standard")
+            a = table.find("a", string="162 Game Avg.")
             th = a.find_parent("th")
             # TODO: identify all necessary data
             plate_appearance = th.find_next_sibling(attrs={"data-stat": "PA"})
@@ -88,9 +92,11 @@ def extractData(teams):
             hitter = Player.Hitter(member.name,rhp,lhp,pow,avg,fin,gro,fly,hme,awy)
             hitters.append(hitter)
         for member in team.pitching:
+            print(member.name)
             page = requests.get(URL + member.endpoint)
             soup = BeautifulSoup(page.content, 'html.parser')
-            a = soup.find("a", string="162 Game Avg.")
+            table = soup.find(id="pitching_standard")
+            a = table.find("a", string="162 Game Avg.")
             th = a.find_parent("th")
             # TODO: identify all necessary data
             innings_pitched = th.find_next_sibling(attrs={"data-stat": "IP"})
