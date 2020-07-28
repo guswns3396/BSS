@@ -79,5 +79,24 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual(row[1],str(0))
 
+    def test_exportPitchersToCSV_createsCSVInDataFolder(self):
+        pitchers = [webscrape.Player.Pitcher("test",0,1)]
+
+        webscrape.exportPitchersToCSV(pitchers)
+
+        self.assertTrue(os.path.isfile("../data/pitchers.csv"))
+
+    def test_exportPitcherssToCSV_outputsCorrectData(self):
+        pitchers = [webscrape.Player.Pitcher("test", 0, 1)]
+
+        webscrape.exportPitchersToCSV(pitchers)
+
+        with open("../data/pitchers.csv", "r") as f:
+            f.readline()
+            row = f.readline()
+            row = row.split(",")
+
+        self.assertEqual(row[1], str(0))
+
 if __name__ == "__main__":
     unittest.main()
