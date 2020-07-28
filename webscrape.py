@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+URL = 'https://www.baseball-reference.com'
 YEAR = 2020
 
 # define team class
@@ -24,31 +25,53 @@ class Member:
         self.endpoint = endpoint
 
 # make GET request to URL to get static page
-URL = 'https://www.baseball-reference.com'
-endpoint = '/teams/'
-page = requests.get(URL + endpoint)
-
-# instantiate soup using html content
-soup = BeautifulSoup(page.content, 'html.parser')
-
-# extract teams
-teams = []
-results = soup.select("td[data-stat='franchise_name'] a")
-for result in results:
-    teams.append(Team(result.string,result['href']))
-
-# get roster for each team
-for team in teams:
-    print(team.name)
-    page = requests.get(URL + team.endpoint + str(YEAR) + ".shtml")
+def extractTeams():
+    """
+    extracts teams from baseball reference
+    :return: list of Team objects
+    """
+    endpoint = '/teams/'
+    page = requests.get(URL + endpoint)
+    # instantiate soup using html content
     soup = BeautifulSoup(page.content, 'html.parser')
-    # get batting roster
-    results = soup.select("#team_batting tbody tr a")
+    # extract teams
+    teams = []
+    results = soup.select("td[data-stat='franchise_name'] a")
     for result in results:
-        team.batting.append(Member(result.string, result['href']))
-    # get pitching roster
-    results = soup.select("#team_pitching tbody tr a")
-    for result in results:
-        team.pitching.append(Member(result.string, result['href']))
+        teams.append(Team(result.string,result['href']))
+    return teams
 
-#
+def extractRoster(teams):
+    """
+    extracts batting & pitching roster for each team in list
+    :param teams: list of Team objects
+    :return: list of Team objects
+    """
+    # get roster for each team
+    for team in teams:
+        page = requests.get(URL + team.endpoint + str(YEAR) + ".shtml")
+        soup = BeautifulSoup(page.content, 'html.parser')
+        # get batting roster
+        results = soup.select("#team_batting tbody tr a")
+        for result in results:
+            team.batting.append(Member(result.string, result['href']))
+        # get pitching roster
+        results = soup.select("#team_pitching tbody tr a")
+        for result in results:
+            team.pitching.append(Member(result.string, result['href']))
+    return teams
+
+# for each player, gather necessary data
+def extractData(teams):
+    for team in teams:
+        for hitter in team.batting:
+            page = requests.get(URL + hitter.endpoint)
+            soup = BeautifulSoup(page.content, 'html.parser')
+            results = soup.select("#batting_standard tfoot tr th", string="162 Game Avg.")
+            for result in results:
+                print(result)
+
+if __name__ == "__main__":
+    teams = extractTeams()
+    teams = extractRoster(teams)
+    extractData(teams)
