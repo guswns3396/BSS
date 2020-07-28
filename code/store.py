@@ -83,7 +83,7 @@ def storeHitters(pathToCSV):
 
     for player in players:
         data = (\
-            player["Player Name"], player["HPRHP"], player["HPLHP"], \
+            player["Player Name"], player["RHP"], player["LHP"], \
             player["HPPower"], player["HPAvg"], player["HPFinesse"], \
             player["HPGroundball"], player["HPFlyball"], player["HPHome"], player["HPAway"], \
                 )

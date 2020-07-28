@@ -109,7 +109,7 @@ def exportHittersToCSV(hitters):
     :return: None
     """
     with open("../data/hitters.csv","w") as f:
-        header = "Player Name,HPRHP,HPLHP,HPPower,HPAvg,HPFinesse,HPGroundball,HPFlyball,HPHome,HPAway"
+        header = "Player Name,RHP,LHP,HPPower,HPAvg,HPFinesse,HPGroundball,HPFlyball,HPHome,HPAway"
         print(header, file=f)
         for hitter in hitters:
             data = [hitter.name,hitter.RHP,hitter.LHP,hitter.HPPower,hitter.HPAvg,
@@ -120,7 +120,21 @@ def exportHittersToCSV(hitters):
             print(",".join(data),file=f)
 
 def exportPitchersToCSV(pitchers):
-    pass
+    """
+        exports all the Pitcher stats into csv
+        :param hitters: list of Pitcher objects
+        :return: None
+        """
+    with open("../data/pitchers.csv", "w") as f:
+        header = "Player Name, RHB, LHB"
+        print(header, file=f)
+        for hitter in hitters:
+            data = [hitter.name, hitter.RHP, hitter.LHP, hitter.HPPower, hitter.HPAvg,
+                    hitter.HPFinesse, hitter.HPGroundball, hitter.HPFlyball,
+                    hitter.HPHome, hitter.HPAway]
+            for i in range(len(data)):
+                data[i] = str(data[i])
+            print(",".join(data), file=f)
 
 if __name__ == "__main__":
     teams = extractTeams()
