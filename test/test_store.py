@@ -97,10 +97,10 @@ class TestStore(unittest.TestCase):
         store.storeHitters("PlayerTest.csv")
 
         cnx, cursor = store.establishConnection()
-        sql = "SELECT name FROM hitters"
+        sql = "SELECT hpavg FROM hitters"
         cursor.execute(sql)
         results = cursor.fetchall()
-        self.assertEqual(results[0], ("Test Player",))
+        self.assertEqual(results[1], (0.2896551724,))
 
     def _steps(self):
         for name in dir(self):

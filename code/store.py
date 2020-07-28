@@ -76,17 +76,16 @@ def storeHitters(pathToCSV):
             players.append(row)
 
     # insert into db
-    sql = "INSERT INTO hitters (name,rhp,lhp,hpflyball,hppower,hpavg,"
-    sql += "hpfinesse,hphome,hpaway,hpgroundball)"
+    sql = "INSERT INTO hitters (name,rhp,lhp,hppower,hpavg,hpfinesse,"
+    sql += "hpgroundball,hpflyball,hphome,hpaway)"
     sql += " VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     sql = (sql)
 
     for player in players:
         data = (\
             player["Player Name"], player["HPRHP"], player["HPLHP"], \
-            player["HPFlyball"], player["HPPower"], player["HPAvg"], \
-            player["HPFinesse"], player["HPHome"], player["HPAway"], \
-            player["HPGroundball"]
+            player["HPPower"], player["HPAvg"], player["HPFinesse"], \
+            player["HPGroundball"], player["HPFlyball"], player["HPHome"], player["HPAway"], \
                 )
         execute(cursor, sql, data)
 
