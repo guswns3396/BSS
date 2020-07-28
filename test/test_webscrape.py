@@ -1,7 +1,15 @@
 import unittest
+import os
 import code.webscrape as webscrape
 
 class TestWebscrape(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        if os.path.isfile("../data/hitters.csv"):
+            os.remove("../data/hitters.csv")
+        if os.path.isfile("../data/pitchers.csv"):
+            os.remove("../data/pitchers.csv")
+
     def test_extractTeams_extractsAllActiveTeams(self):
         teams = webscrape.extractTeams()
 
@@ -18,14 +26,14 @@ class TestWebscrape(unittest.TestCase):
 
         webscrape.extractRoster(teams)
 
-        self.assertEqual(len(teams[0].batting), 25)
+        self.assertEqual(len(teams[0].batting), 28)
 
     def test_extractRoster_extractsAllPitchers(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
 
         webscrape.extractRoster(teams)
 
-        self.assertEqual(len(teams[0].pitching), 12)
+        self.assertEqual(len(teams[0].pitching), 14)
 
     def test_extractRoster_extractsNameAndEndpoint(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
@@ -51,6 +59,25 @@ class TestWebscrape(unittest.TestCase):
         hitters, pitchers = webscrape.extractData(teams)
 
         self.assertEqual(pitchers[0].RHB, 192 / 218)
+
+    def test_exportHittersToCSV_createsCSVInDataFolder(self):
+        hitters = [webscrape.Player.Hitter("test",0,1,2,3,4,5,6,7,8)]
+
+        webscrape.exportHittersToCSV(hitters)
+
+        self.assertTrue(os.path.isfile("../data/hitters.csv"))
+
+    def test_exportHittersToCSV_outputsCorrectData(self):
+        hitters = [webscrape.Player.Hitter("test", 0, 1, 2, 3, 4, 5, 6, 7, 8)]
+
+        webscrape.exportHittersToCSV(hitters)
+
+        with open("../data/hitters.csv","r") as f:
+            f.readline()
+            row = f.readline()
+            row = row.split(",")
+
+        self.assertEqual(row[1],str(0))
 
 if __name__ == "__main__":
     unittest.main()

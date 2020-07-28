@@ -76,14 +76,14 @@ def extractData(teams):
             plate_appearance = th.find_next_sibling(attrs={"data-stat": "PA"})
             hits = th.find_next_sibling(attrs={"data-stat": "H"})
             rhp = int(hits.string) / int(plate_appearance.string)
-            lhp = 0
-            pow = 0
-            avg = 0
-            fin = 0
-            gro = 0
-            fly = 0
-            hme = 0
-            awy = 0
+            lhp = 1
+            pow = 2
+            avg = 3
+            fin = 4
+            gro = 5
+            fly = 6
+            hme = 7
+            awy = 8
             # instantiate hitter & add to list
             hitter = Player.Hitter(member.name,rhp,lhp,pow,avg,fin,gro,fly,hme,awy)
             hitters.append(hitter)
@@ -96,13 +96,30 @@ def extractData(teams):
             innings_pitched = th.find_next_sibling(attrs={"data-stat": "IP"})
             hits = th.find_next_sibling(attrs={"data-stat": "H"})
             rhb = int(hits.string) / float(innings_pitched.string)
-            lhb = int(hits.string) / float(innings_pitched.string)
+            lhb = 1
             # instantiate pitcher & add to list
             pitcher = Player.Pitcher(member.name, rhb, lhb)
             pitchers.append(pitcher)
     return hitters, pitchers
 
-def exportToCSV():
+def exportHittersToCSV(hitters):
+    """
+    exports all the Hitter stats into csv
+    :param hitters: list of Hitter objects
+    :return: None
+    """
+    with open("../data/hitters.csv","w") as f:
+        header = "Player Name,HPRHP,HPLHP,HPPower,HPAvg,HPFinesse,HPGroundball,HPFlyball,HPHome,HPAway"
+        print(header, file=f)
+        for hitter in hitters:
+            data = [hitter.name,hitter.RHP,hitter.LHP,hitter.HPPower,hitter.HPAvg,
+                  hitter.HPFinesse,hitter.HPGroundball,hitter.HPFlyball,
+                  hitter.HPHome,hitter.HPAway]
+            for i in range(len(data)):
+                data[i] = str(data[i])
+            print(",".join(data),file=f)
+
+def exportPitchersToCSV(pitchers):
     pass
 
 if __name__ == "__main__":
