@@ -44,6 +44,32 @@ class TestWebscrape(unittest.TestCase):
         output = teams[0].batting[0].name + " " + teams[0].batting[0].endpoint
         self.assertEqual(expected, output)
 
+    def test_searchForTable_parsesCommentedOutBattingTable(self):
+        teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
+        teams[0].batting.append(webscrape.Member("Luke Weaver", "/players/w/weavelu01.shtml"))
+        page = webscrape.requests.get(webscrape.URL + teams[0].batting[0].endpoint)
+        soup = webscrape.BeautifulSoup(page.content, 'html.parser')
+
+        table = webscrape.searchForTable(soup, "batting_standard")
+
+        a = table.find("a", string="162 Game Avg.")
+        th = a.find_parent("th")
+        plate_appearance = int(th.find_next_sibling(attrs={"data-stat": "PA"}).string)
+        self.assertEqual(238, plate_appearance)
+
+    def test_searchForTable_parsesCommentedOutPitchingTable(self):
+        pass
+
+    def test_searchForTable_returnsNoneIfNotFound(self):
+        teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
+        teams[0].batting.append(webscrape.Member("Taylor Widener", "/players/w/widenta01.shtml"))
+        page = webscrape.requests.get(webscrape.URL + teams[0].batting[0].endpoint)
+        soup = webscrape.BeautifulSoup(page.content, 'html.parser')
+
+        table = webscrape.searchForTable(soup, "batting_standard")
+
+        self.assertEqual(None, table)
+
     def test_extractData_extractsBattingData(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
         teams[0].batting.append(webscrape.Member("Carson Kelly", "/players/k/kellyca02.shtml"))
