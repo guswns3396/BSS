@@ -50,12 +50,11 @@ def extractRoster(teams):
         page = requests.get(URL + team.endpoint + str(YEAR) + ".shtml")
         soup = BeautifulSoup(page.content, 'html.parser')
         # get batting roster
-        batting_roster = soup.select("#team_batting tbody tr")
-        results = soup.select("#team_batting tbody tr td:nth-of-type(3) a")
+        results = soup.select("#team_batting tbody td[data-stat='player'] a")
         for result in results:
             team.batting.append(Member(result.string, result['href']))
         # get pitching roster
-        results = soup.select("#team_pitching tbody tr a")
+        results = soup.select("#team_pitching tbody td[data-stat='player'] a")
         for result in results:
             team.pitching.append(Member(result.string, result['href']))
     return teams
