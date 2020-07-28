@@ -36,11 +36,21 @@ class TestWebscrape(unittest.TestCase):
         output = teams[0].batting[0].name + " " + teams[0].batting[0].endpoint
         self.assertEqual(expected, output)
 
-    def test_extractData(self):
+    def test_extractData_extractsBattingData(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
-        webscrape.extractRoster(teams)
+        teams[0].batting.append(webscrape.Member("Carson Kelly", "/players/k/kellyca02.shtml"))
 
-        webscrape.extractData(teams)
+        hitters, pitchers = webscrape.extractData(teams)
+
+        self.assertEqual(hitters[0].HPA, 86 / 461)
+
+    def test_extractData_extractsPitchingData(self):
+        teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
+        teams[0].pitching.append(webscrape.Member("Madison Bumgarner", "/players/b/bumgama01.shtml"))
+
+        hitters, pitchers = webscrape.extractData(teams)
+
+        self.assertEqual(pitchers[0].RHB, 192 / 218)
 
 if __name__ == "__main__":
     unittest.main()

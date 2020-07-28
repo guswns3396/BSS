@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import code.Player as Player
 
 URL = 'https://www.baseball-reference.com'
 YEAR = 2020
@@ -24,7 +25,6 @@ class Member:
         self.name = name
         self.endpoint = endpoint
 
-# make GET request to URL to get static page
 def extractTeams():
     """
     extracts teams from baseball reference
@@ -58,18 +58,52 @@ def extractRoster(teams):
         for result in results:
             team.pitching.append(Member(result.string, result['href']))
 
-# for each player, gather necessary data
 def extractData(teams):
+    """
+    extracts necessary data from website to instantiate Player objects
+    :param teams: list of Team objects
+    :return: lists of Hitter & Pitcher objects
+    """
+    hitters, pitchers = [], []
     for team in teams:
-        for hitter in team.batting:
-            page = requests.get(URL + hitter.endpoint)
+        for member in team.batting:
+            # extract necessary data
+            page = requests.get(URL + member.endpoint)
             soup = BeautifulSoup(page.content, 'html.parser')
-            results = soup.select("#batting_standard tfoot tr th", string="162 Game Avg.")
-            for result in results:
-                print(result)
-            print("done")
+            a = soup.find("a", string="162 Game Avg.")
+            th = a.find_parent("th")
+            # TODO: identify all necessary data
+            plate_appearance = th.find_next_sibling(attrs={"data-stat": "PA"})
+            hits = th.find_next_sibling(attrs={"data-stat": "H"})
+            hpa = int(hits.string) / int(plate_appearance.string)
+            rhp = 0
+            lhp = 0
+            pow = 0
+            avg = 0
+            fin = 0
+            gro = 0
+            fly = 0
+            hme = 0
+            awy = 0
+            # instantiate hitter & add to list
+            hitter = Player.Hitter(member.name,hpa,rhp,lhp,pow,avg,fin,gro,fly,hme,awy)
+            hitters.append(hitter)
+        for member in team.pitching:
+            page = requests.get(URL + member.endpoint)
+            soup = BeautifulSoup(page.content, 'html.parser')
+            a = soup.find("a", string="162 Game Avg.")
+            th = a.find_parent("th")
+            # TODO: identify all necessary data
+            innings_pitched = th.find_next_sibling(attrs={"data-stat": "IP"})
+            hits = th.find_next_sibling(attrs={"data-stat": "H"})
+            rhb = int(hits.string) / float(innings_pitched.string)
+            lhb = int(hits.string) / float(innings_pitched.string)
+            # instantiate pitcher & add to list
+            pitcher = Player.Pitcher(member.name, rhb, lhb)
+            pitchers.append(pitcher)
+    return hitters, pitchers
 
 if __name__ == "__main__":
     teams = extractTeams()
     extractRoster(teams)
-    extractData(teams)
+    hitters, pitchers = extractData(teams)
