@@ -5,8 +5,8 @@ class Player:
 class Hitter(Player):
     def __init__(self, name, rhp, lhp, power, avg, finesse, ground, fly, home, away):
         super().__init__(name)
-        self.HPRHP = rhp
-        self.HPLHP = lhp
+        self.RHP = rhp
+        self.LHP = lhp
         self.HPPower = power
         self.HPAvg = avg
         self.HPFinesse = finesse
