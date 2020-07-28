@@ -1,5 +1,5 @@
 import unittest
-import webscrape
+import code.webscrape as webscrape
 
 class TestWebscrape(unittest.TestCase):
     def test_extractTeams_extractsAllActiveTeams(self):

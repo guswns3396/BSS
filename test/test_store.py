@@ -2,7 +2,7 @@ import importlib
 import unittest
 import os
 import pathlib
-import store
+import code.store as store
 
 class TestStore(unittest.TestCase):
     def tearDown(self):
