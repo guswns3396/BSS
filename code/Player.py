@@ -3,9 +3,8 @@ class Player:
         self.name = name
 
 class Hitter(Player):
-    def __init__(self, name, hpa, rhp, lhp, power, avg, finesse, ground, fly, home, away):
+    def __init__(self, name, rhp, lhp, power, avg, finesse, ground, fly, home, away):
         super().__init__(name)
-        self.HPA = hpa
         self.RHP = rhp
         self.LHP = lhp
         self.HPPower = power

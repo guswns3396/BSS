@@ -75,8 +75,7 @@ def extractData(teams):
             # TODO: identify all necessary data
             plate_appearance = th.find_next_sibling(attrs={"data-stat": "PA"})
             hits = th.find_next_sibling(attrs={"data-stat": "H"})
-            hpa = int(hits.string) / int(plate_appearance.string)
-            rhp = 0
+            rhp = int(hits.string) / int(plate_appearance.string)
             lhp = 0
             pow = 0
             avg = 0
@@ -86,7 +85,7 @@ def extractData(teams):
             hme = 0
             awy = 0
             # instantiate hitter & add to list
-            hitter = Player.Hitter(member.name,hpa,rhp,lhp,pow,avg,fin,gro,fly,hme,awy)
+            hitter = Player.Hitter(member.name,rhp,lhp,pow,avg,fin,gro,fly,hme,awy)
             hitters.append(hitter)
         for member in team.pitching:
             page = requests.get(URL + member.endpoint)
@@ -102,6 +101,9 @@ def extractData(teams):
             pitcher = Player.Pitcher(member.name, rhb, lhb)
             pitchers.append(pitcher)
     return hitters, pitchers
+
+def exportToCSV():
+    pass
 
 if __name__ == "__main__":
     teams = extractTeams()

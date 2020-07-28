@@ -42,7 +42,7 @@ class TestWebscrape(unittest.TestCase):
 
         hitters, pitchers = webscrape.extractData(teams)
 
-        self.assertEqual(hitters[0].HPA, 86 / 461)
+        self.assertEqual(hitters[0].RHP, 86 / 461)
 
     def test_extractData_extractsPitchingData(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
