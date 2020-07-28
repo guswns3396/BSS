@@ -1,18 +1,23 @@
-class Hitter:
-    def __init__(self, row):
-        self.name = row['Player Name']
-        self.RHP = float(row["HPRHP"])
-        self.LHP = float(row["HPLHP"])
-        self.HPFlyball = float(row['HPFlyball'])
-        self.HPPower = float(row['HPPower'])
-        self.HPAvg = float(row['HPAvg'])
-        self.HPFinese = float(row['HPFinese'])
-        self.HPHome = float(row['HPHome'])
-        self.HPAway = float(row['HPAway'])
-        self.HPGroundball = float(row['HPGroundball'])
+class Player:
+    def __init__(self, name):
+        self.name = name
 
-class Pitcher:
-    def __init__(self, row):
-        self.name = row['Player Name']
-        self.RHB = float(row["HPRHB"])
-        self.LHB = float(row["HPLHB"])
+class Hitter(Player):
+    def __init__(self, name, hpa, rhp, lhp, power, avg, finesse, ground, fly, home, away):
+        super().__init__(name)
+        self.HPA = hpa
+        self.RHP = rhp
+        self.LHP = lhp
+        self.HPPower = power
+        self.HPAvg = avg
+        self.HPFinesse = finesse
+        self.HPGroundball = ground
+        self.HPFlyball = fly
+        self.HPHome = home
+        self.HPAway = away
+
+class Pitcher(Player):
+    def __init__(self, name, rhb, lhb):
+        super().__init__(name)
+        self.RHB = rhb
+        self.LHB = lhb
