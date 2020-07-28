@@ -57,7 +57,6 @@ def extractRoster(teams):
         results = soup.select("#team_pitching tbody td[data-stat='player'] a")
         for result in results:
             team.pitching.append(Member(result.string, result['href']))
-    return teams
 
 # for each player, gather necessary data
 def extractData(teams):
@@ -68,8 +67,9 @@ def extractData(teams):
             results = soup.select("#batting_standard tfoot tr th", string="162 Game Avg.")
             for result in results:
                 print(result)
+            print("done")
 
 if __name__ == "__main__":
     teams = extractTeams()
-    teams = extractRoster(teams)
+    extractRoster(teams)
     extractData(teams)

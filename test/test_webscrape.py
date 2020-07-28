@@ -16,25 +16,31 @@ class TestWebscrape(unittest.TestCase):
     def test_extractRoster_extractsAllBatters(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
 
-        teams = webscrape.extractRoster(teams)
+        webscrape.extractRoster(teams)
 
         self.assertEqual(len(teams[0].batting), 25)
 
     def test_extractRoster_extractsAllPitchers(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
 
-        teams = webscrape.extractRoster(teams)
+        webscrape.extractRoster(teams)
 
         self.assertEqual(len(teams[0].pitching), 12)
 
     def test_extractRoster_extractsNameAndEndpoint(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
 
-        teams = webscrape.extractRoster(teams)
+        webscrape.extractRoster(teams)
 
         expected = "Carson Kelly /players/k/kellyca02.shtml"
         output = teams[0].batting[0].name + " " + teams[0].batting[0].endpoint
         self.assertEqual(expected, output)
+
+    def test_extractData(self):
+        teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
+        webscrape.extractRoster(teams)
+
+        webscrape.extractData(teams)
 
 if __name__ == "__main__":
     unittest.main()
