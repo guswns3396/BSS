@@ -30,12 +30,13 @@ def extractTeams():
     extracts teams from baseball reference
     :return: list of Team objects
     """
+    teams = []
     endpoint = '/teams/'
     page = requests.get(URL + endpoint)
-    # instantiate soup using html content
     soup = BeautifulSoup(page.content, 'html.parser')
-    # extract teams
-    teams = []
+    # list of tr tags that are under tbody of table with id="teams_active"
+    trs = soup.select("#teams_active tbody tr")
+    # list of a tags under td that have attribute data-stat='franchise_name'
     results = soup.select("td[data-stat='franchise_name'] a")
     for result in results:
         teams.append(Team(result.string,result['href']))
@@ -52,7 +53,7 @@ def extractRoster(teams):
         page = requests.get(URL + team.endpoint + str(YEAR) + ".shtml")
         soup = BeautifulSoup(page.content, 'html.parser')
         # get batting roster
-        results = soup.select("#team_batting tbody tr a")
+        results = soup.select("#team_batting tbody tr td:nth-of-type(3) a")
         for result in results:
             team.batting.append(Member(result.string, result['href']))
         # get pitching roster
