@@ -179,7 +179,7 @@ def exportHittersToCSV(hitters):
     :param hitters: list of Hitter objects
     :return: None
     """
-    with open("../data/hitters.csv","w") as f:
+    with open("../data/hitters.csv","w",encoding='utf8') as f:
         header = "Player Name,RHP,LHP,HPPower,HPAvg,HPFinesse,HPGroundball,HPFlyball,HPHome,HPAway"
         print(header, file=f)
         for hitter in hitters:
@@ -196,7 +196,7 @@ def exportPitchersToCSV(pitchers):
         :param pitchers: list of Pitcher objects
         :return: None
         """
-    with open("../data/pitchers.csv", "w") as f:
+    with open("../data/pitchers.csv", "w",encoding='utf8') as f:
         header = "Player Name, RHB, LHB"
         print(header, file=f)
         for pitcher in pitchers:
