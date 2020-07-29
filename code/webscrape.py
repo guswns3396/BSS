@@ -48,6 +48,12 @@ def extractRoster(teams):
     """
     # get roster for each team
     for team in teams:
+        if team.endpoint == '/teams/ANA/':
+            team.endpoint = '/teams/LAA/'
+        elif team.endpoint == '/teams/FLA/':
+            team.endpoint = '/teams/MIA/'
+        elif team.endpoint == '/teams/TBD/':
+            team.endpoint = '/teams/TBR/'
         page = requests.get(URL + team.endpoint + str(YEAR) + ".shtml")
         soup = BeautifulSoup(page.content, 'html.parser')
         # get batting roster
