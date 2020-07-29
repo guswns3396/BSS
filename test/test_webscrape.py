@@ -58,6 +58,7 @@ class TestWebscrape(unittest.TestCase):
         self.assertEqual(238, plate_appearance)
 
     def test_searchForTable_parsesCommentedOutPitchingTable(self):
+        # could not find example where pitching table is commented out
         pass
 
     def test_searchForTable_returnsNoneIfNotFound(self):
@@ -69,6 +70,58 @@ class TestWebscrape(unittest.TestCase):
         table = webscrape.searchForTable(soup, "batting_standard")
 
         self.assertEqual(None, table)
+
+    def test_extractFromTable_extractsBattingData(self):
+        page = webscrape.requests.get(webscrape.URL + "/players/k/kellyca02.shtml")
+        soup = webscrape.BeautifulSoup(page.content, 'html.parser')
+        table = soup.find(id='batting_standard')
+
+        output = webscrape.extractFromTable(table,'hitter')
+
+        expected = {'rhp': 0, 'lhp': 1, 'pow': 2, 'avg': 3, 'fin': 4,
+                    'gro': 5, 'fly': 6, 'hme': 7, 'awy': 8}
+        self.assertEqual(expected, output)
+
+    def test_extractFromTable_extractsPitchingData(self):
+        page = webscrape.requests.get(webscrape.URL + "/players/b/bumgama01.shtml")
+        soup = webscrape.BeautifulSoup(page.content, 'html.parser')
+        table = soup.find(id='pitching_standard')
+
+        output = webscrape.extractFromTable(table, 'pitcher')
+
+        expected = {'rhb': 192 / 218, 'lhb': 1}
+        self.assertEqual(expected, output)
+
+    def test_extractFromTable_returnDefaultIfBattingTableNotFound(self):
+        table = None
+
+        output = webscrape.extractFromTable(table, 'hitter')
+
+        expected = {'rhp': 0, 'lhp': 1, 'pow': 2, 'avg': 3, 'fin': 4,
+                    'gro': 5, 'fly': 6, 'hme': 7, 'awy': 8}
+        self.assertEqual(expected, output)
+
+    def test_extractFromTable_returnDefaultIfPitchingTableNotFound(self):
+        table = None
+
+        output = webscrape.extractFromTable(table, 'pitcher')
+
+        expected = {'rhb': 0, 'lhb': 1}
+        self.assertEqual(expected, output)
+
+    def test_extractFromTable_raisesExceptionIfInvalidArgument(self):
+        table = None
+
+        with self.assertRaises(Exception) as context:
+            output = webscrape.extractFromTable(table)
+
+        self.assertIsInstance(context.exception, ValueError)
+
+    def test_extractData_instantiatesHitter(self):
+        pass
+
+    def test_extractData_instantiatesPitcher(self):
+        pass
 
     def test_extractData_extractsBattingData(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
@@ -102,7 +155,6 @@ class TestWebscrape(unittest.TestCase):
             f.readline()
             row = f.readline()
             row = row.split(",")
-
         self.assertEqual(row[1],str(0))
 
     def test_exportPitchersToCSV_createsCSVInDataFolder(self):
@@ -112,7 +164,7 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertTrue(os.path.isfile("../data/pitchers.csv"))
 
-    def test_exportPitcherssToCSV_outputsCorrectData(self):
+    def test_exportPitchersToCSV_outputsCorrectData(self):
         pitchers = [webscrape.Player.Pitcher("test", 0, 1)]
 
         webscrape.exportPitchersToCSV(pitchers)
@@ -121,7 +173,6 @@ class TestWebscrape(unittest.TestCase):
             f.readline()
             row = f.readline()
             row = row.split(",")
-
         self.assertEqual(row[1], str(0))
 
 if __name__ == "__main__":
