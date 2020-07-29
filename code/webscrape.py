@@ -82,7 +82,7 @@ def searchForTable(soup, id):
     else:
         return table
 
-def extractFromTable(table: BeautifulSoup, type: str):
+def extractFromTable(table: BeautifulSoup, type=None):
     """
     extracts data from table depending on type
     :param table: soup object of table
@@ -127,11 +127,15 @@ def extractFromTable(table: BeautifulSoup, type: str):
             innings_pitched = float(th.find_next_sibling(attrs={"data-stat": "IP"}).string)
             hits = int(th.find_next_sibling(attrs={"data-stat": "H"}).string)
         # calculate stats
-        data['rhb'] = hits / innings_pitched
+        if innings_pitched == 0:
+            data['rhb'] = 0
+        else:
+            data['rhb'] = hits / innings_pitched
         data['lhb'] = 1
         return data
     else:
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
 def extractData(teams):
     """
     extracts necessary data from website to instantiate Player objects
