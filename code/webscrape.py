@@ -170,6 +170,7 @@ def extractData(teams):
             # instantiate pitcher & add to list
             pitcher = Player.Pitcher(member.name, data['rhb'], data['lhb'])
             pitchers.append(pitcher)
+        print("")
     return hitters, pitchers
 
 def exportHittersToCSV(hitters):
