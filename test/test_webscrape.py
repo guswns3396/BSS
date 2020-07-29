@@ -117,12 +117,6 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertIsInstance(context.exception, ValueError)
 
-    def test_extractData_instantiatesHitter(self):
-        pass
-
-    def test_extractData_instantiatesPitcher(self):
-        pass
-
     def test_extractData_extractsBattingData(self):
         teams = [webscrape.Team("Arizona Diamondbacks", "/teams/ARI/")]
         teams[0].batting.append(webscrape.Member("Carson Kelly", "/players/k/kellyca02.shtml"))
