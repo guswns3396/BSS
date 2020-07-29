@@ -144,7 +144,7 @@ def extractData(teams):
     """
     hitters, pitchers = [], []
     for team in teams:
-        print(team.name)
+        print(team.name, "[", len(team.batting), len(team.pitching), "]")
         print("-"*20)
         for member in team.batting:
             print(member.name)
