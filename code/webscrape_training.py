@@ -39,7 +39,16 @@ def extractTeams(endpoint_game):
     return team_away, team_home
 
 def extractTeamID(team):
-    pass
+    """
+    gets the team id format from the team name
+    :param team: string of team name
+    :return: string of team in id format
+    """
+    id = ""
+    for char in team:
+        if char.isalpha():
+            id += char
+    return id
 
 def extractBattingTable(teamID):
     pass

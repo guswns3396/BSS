@@ -16,5 +16,19 @@ class TestWebscrape(unittest.TestCase):
         isHome = team_home == "Arizona Diamondbacks"
         self.assertTrue(isAway and isHome)
 
+    def test_extractTeamID_extractsSameCapitalization(self):
+        team_name = "Los Angeles Angels of Anaheim"
+
+        team_id = ws.extractTeamID(team_name)
+
+        self.assertEqual("LosAngelesAngelsofAnaheim", team_id)
+
+    def test_extractTeamID_extractsOnlyAlphabets(self):
+        team_name = "St. Louis Cardinals"
+
+        team_id = ws.extractTeamID(team_name)
+
+        self.assertEqual("StLouisCardinals", team_id)
+
 if __name__ == "__main__":
     unittest.main()
