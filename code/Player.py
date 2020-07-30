@@ -3,20 +3,21 @@ class Player:
         self.name = name
 
 class Hitter(Player):
-    def __init__(self, name, rhp, lhp, power, avg, finesse, ground, fly, home, away):
+    def __init__(self, name, pa, h, so, r, l):
         super().__init__(name)
-        self.RHP = rhp
-        self.LHP = lhp
-        self.HPPower = power
-        self.HPAvg = avg
-        self.HPFinesse = finesse
-        self.HPGroundball = ground
-        self.HPFlyball = fly
-        self.HPHome = home
-        self.HPAway = away
+        self.PA = pa
+        self.H = h
+        self.SO = so
+        self.R = r
+        self.L = l
 
 class Pitcher(Player):
-    def __init__(self, name, rhb, lhb):
+    def __init__(self, name, sho, ip, h, so, bf, r, l):
         super().__init__(name)
-        self.RHB = rhb
-        self.LHB = lhb
+        self.SHO = sho
+        self.IP = ip
+        self.H = h
+        self.SO = so
+        self.BF = bf
+        self.R = r
+        self.L = l
