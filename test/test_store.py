@@ -23,7 +23,7 @@ class TestStore(unittest.TestCase):
         if os.path.isfile(path):
             os.remove(path)
 
-    def step1_establishConnection_raisesErrorWhenWrongPassword(self):
+    def test_establishConnection_raisesErrorWhenWrongPassword(self):
         print("Enter Incorrect Password")
         importlib.reload(store)
 
@@ -34,13 +34,15 @@ class TestStore(unittest.TestCase):
         importlib.reload(store)
         self.assertEqual(cm.exception.code, 1)
 
-    def step1_establishConnection_establishesConnection(self):
+    def test_establishConnection_establishesConnection(self):
         cnx, cursor = store.establishConnection()
 
         self.assertIsInstance(cursor, store.mysql.connector.cursor.MySQLCursor)
 
-    def step2_execute_executesQuery(self):
-        cnx, cursor = store.establishConnection()
+    def test_execute_executesQuery(self):
+        cnx = store.mysql.connector.connect(user=store.USER, password=store.PW,
+                                            host=store.HOST, database=store.DB)
+        cursor = cnx.cursor()
         sql = "INSERT INTO hitters (name,rhp,lhp,hpflyball,hppower,hpavg,"
         sql += "hpfinesse,hphome,hpaway,hpgroundball)"
         sql += " VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -56,8 +58,10 @@ class TestStore(unittest.TestCase):
         cnx.close()
         self.assertEqual(results[0],("Test Player",))
 
-    def step2_execute_raisesError(self):
-        cnx, cursor = store.establishConnection()
+    def test_execute_raisesError(self):
+        cnx = store.mysql.connector.connect(user=store.USER, password=store.PW,
+                                            host=store.HOST, database=store.DB)
+        cursor = cnx.cursor()
         sql = "this is a test"
         data = ()
 
@@ -68,8 +72,10 @@ class TestStore(unittest.TestCase):
         cnx.close()
         self.assertIsInstance(cm.exception, store.mysql.connector.Error)
 
-    def step3_closeConnection_commitsChange(self):
-        cnx, cursor = store.establishConnection()
+    def test_closeConnection_commitsChange(self):
+        cnx = store.mysql.connector.connect(user=store.USER, password=store.PW,
+                                            host=store.HOST, database=store.DB)
+        cursor = cnx.cursor()
         sql = "INSERT INTO hitters (name,rhp,lhp,hpflyball,hppower,hpavg,"
         sql += "hpfinesse,hphome,hpaway,hpgroundball)"
         sql += " VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -79,7 +85,9 @@ class TestStore(unittest.TestCase):
 
         store.closeConnection(cnx, cursor)
 
-        cnx, cursor = store.establishConnection()
+        cnx = store.mysql.connector.connect(user=store.USER, password=store.PW,
+                                            host=store.HOST, database=store.DB)
+        cursor = cnx.cursor()
         sql = "SELECT name FROM hitters"
         cursor.execute(sql)
         results = cursor.fetchall()
@@ -87,7 +95,7 @@ class TestStore(unittest.TestCase):
         cnx.close()
         self.assertEqual(results[0],("Test Player",))
 
-    def step4_storePlayersToDB_insertsHittersIntoDatabase(self):
+    def test_storePlayersToDB_insertsHittersIntoDatabase(self):
         with open("PlayerTest.csv","w") as f:
             header = "Player Name,RHP,LHP,HPHome,HPAway,HPPower,HPFinesse,HPFlyball,HPGroundball,HPAvg"
             print(header,file=f)
@@ -96,23 +104,13 @@ class TestStore(unittest.TestCase):
 
         store.storePlayersToDB("PlayerTest.csv",'hitter')
 
-        cnx, cursor = store.establishConnection()
+        cnx = store.mysql.connector.connect(user=store.USER, password=store.PW,
+                                            host=store.HOST, database=store.DB)
+        cursor = cnx.cursor()
         sql = "SELECT hpavg FROM hitters"
         cursor.execute(sql)
         results = cursor.fetchall()
-        self.assertEqual(results[1], (0.2896551724,))
-
-    def _steps(self):
-        for name in dir(self):
-            if name.startswith("step"):
-                yield name, getattr(self, name)
-
-    def test_steps(self):
-        for name, step in self._steps():
-            try:
-                step()
-            except Exception as e:
-                self.fail("{} failed ({} : {})".format(step,type(e),e))
+        self.assertEqual(results[0], (0.2896551724,))
 
 if __name__ == "__main__":
     unittest.main()
