@@ -88,8 +88,30 @@ def extractPlayerEndpointsFromTable(table):
         endpoints.append(a['href'])
     return endpoints
 
-def extractPlayerStats_Career(endpoint_player, type):
-    pass
+def extractHitterOutcome(endpoint_player):
+    """
+    extracts the player's stats for the game (only deals with hitters)
+    for the Ground Truth of the model
+    :param endpoint_player: endpoint of player
+    :return: the player's hits / team's total hits
+    """
 
-def extractPlayerStats_Game(endpoint_player, type):
-    pass
+def extractPlayerCareerStats(endpoint_player, players_all, type, year):
+    """
+    extracts the player's stats for his entire career (up until the game)
+    for input to the model
+    :param endpoint_player: endpoint to player profile
+    :param players_all: list of Player objects to update if needed
+    :param type: 'hitter' or 'pitcher'
+    :param year: current year of season
+    :return: returns updated list of Player objects
+    """
+    # invalid argument
+    if type != 'hitter' and type != 'pitcher':
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+    # hitter
+    elif type == 'hitter':
+        pass
+    # pitcher
+    else:
+        pass
