@@ -16,9 +16,30 @@ def extractGamesFromSeason(year):
     page = requests.get(URL + endpoint_schedule)
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    endpoints = []
     endpoints = soup.find_all(string="Boxscore")
     for i in range(len(endpoints)):
         endpoints[i] = endpoints[i].parent['href']
 
     return endpoints
+
+def extractTeams(endpoint_game):
+    """
+    extracts away & home team names
+    :param endpoint_game: endpoint to game
+    :return: away & home team names
+    """
+    page = requests.get(URL + endpoint_game)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    scorebox = soup.find(class_="scorebox")
+    strong = scorebox.find_all(attrs={"itemprop": "name"})
+    team_away = strong[0].string
+    team_home = strong[1].string
+
+    return team_away, team_home
+
+def extractTeamID(team):
+    pass
+
+def extractBattingTable(teamID):
+    pass
