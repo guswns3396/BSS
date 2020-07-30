@@ -87,14 +87,14 @@ class TestStore(unittest.TestCase):
         cnx.close()
         self.assertEqual(results[0],("Test Player",))
 
-    def step4_storeHitters_insertsIntoDatabase(self):
+    def step4_storePlayersToDB_insertsHittersIntoDatabase(self):
         with open("PlayerTest.csv","w") as f:
-            header = "Player Name,HPRHP,HPLHP,HPHome,HPAway,HPPower,HPFinesse,HPFlyball,HPGroundball,HPAvg"
+            header = "Player Name,RHP,LHP,HPHome,HPAway,HPPower,HPFinesse,HPFlyball,HPGroundball,HPAvg"
             print(header,file=f)
             hitter = "Test Player,0.2679324895,0.2763157895,0.2787878788,0.2601351351,0.3375796178,0.2315270936,0.2487804878,0.2595419847,0.2896551724"
             print(hitter,file=f)
 
-        store.storeHitters("PlayerTest.csv")
+        store.storePlayersToDB("PlayerTest.csv",'hitter')
 
         cnx, cursor = store.establishConnection()
         sql = "SELECT hpavg FROM hitters"

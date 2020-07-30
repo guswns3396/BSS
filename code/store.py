@@ -58,13 +58,18 @@ def closeConnection(cnx, cursor):
     cursor.close()
     cnx.close()
 
-def storeHitters(pathToCSV):
+def storePlayersToDB(pathToCSV, type):
     """
     given path to csv containing stats of hitters,
     store them into database
     :param path: path to csv file containing stats of hitters
+    :param type: string 'hitter' or 'pitcher
     :return: None
     """
+    # check for valid arguments
+    if type != "hitter" and type != "pitcher":
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
     # establish connection
     cnx, cursor = establishConnection()
 
@@ -75,18 +80,23 @@ def storeHitters(pathToCSV):
         for row in rd:
             players.append(row)
 
-    # insert into db
-    sql = "INSERT INTO hitters (name,rhp,lhp,hppower,hpavg,hpfinesse,"
-    sql += "hpgroundball,hpflyball,hphome,hpaway)"
-    sql += " VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    sql = (sql)
+    # do for type
+    if type == 'hitter':
+        # insert into db
+        sql = "INSERT INTO hitters (name,rhp,lhp,hppower,hpavg,hpfinesse,"
+        sql += "hpgroundball,hpflyball,hphome,hpaway)"
+        sql += " VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = (sql)
 
-    for player in players:
-        data = (\
-            player["Player Name"], player["RHP"], player["LHP"], \
-            player["HPPower"], player["HPAvg"], player["HPFinesse"], \
-            player["HPGroundball"], player["HPFlyball"], player["HPHome"], player["HPAway"], \
-                )
-        execute(cursor, sql, data)
+        for player in players:
+            data = (\
+                player["Player Name"], player["RHP"], player["LHP"], \
+                player["HPPower"], player["HPAvg"], player["HPFinesse"], \
+                player["HPGroundball"], player["HPFlyball"], player["HPHome"], player["HPAway"], \
+                    )
+            execute(cursor, sql, data)
+    elif type == 'pitcher':
+        pass
 
+    # commit changes & close connection
     closeConnection(cnx, cursor)
