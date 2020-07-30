@@ -73,5 +73,17 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual(14, len(endpoint_players))
 
+    def test_extractHitterOutcome_extractsCorrectOutcome(self):
+        endpoint = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "StLouisCardinalsbatting"
+        table = ws.searchForTable(soup, search_id)
+        endpoint_player = "/players/h/heywaja01.shtml"
+
+        h_contribution = ws.extractHitterOutcome(table, endpoint_player)
+
+        self.assertEqual(3/10, h_contribution)
+
 if __name__ == "__main__":
     unittest.main()

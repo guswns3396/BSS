@@ -88,13 +88,24 @@ def extractPlayerEndpointsFromTable(table):
         endpoints.append(a['href'])
     return endpoints
 
-def extractHitterOutcome(endpoint_player):
+def extractHitterOutcome(table, endpoint_player):
     """
     extracts the player's stats for the game (only deals with hitters)
     for the Ground Truth of the model
+    :param: table: table Tag object of the game batting results
     :param endpoint_player: endpoint of player
-    :return: the player's hits / team's total hits
+    :return: the player's hits / team's total hits (h_contribution)
     """
+    # find player's hits
+    a = table.find(attrs={'href': endpoint_player})
+    tr = a.find_parent("tr")
+    h = int(tr.find(attrs={"data-stat":"H"}).string)
+    # find team's total hits
+    th = table.find(string="Team Totals").parent
+    h_total = int(th.find_next_sibling(attrs={"data-stat":"H"}).string)
+    # calculate contribution
+    h_contribution = h / h_total
+    return h_contribution
 
 def extractPlayerCareerStats(endpoint_player, players_all, type, year):
     """
