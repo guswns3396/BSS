@@ -7,7 +7,7 @@ class Game:
         :param id: id of the game (endpoint_game + '-A' or '-H' for away or home)
         :param hitters: list of Hitter objects
         :param pitchers: list of Pitcher objects
-        :param outcome: dictionary that maps hitter's name to percentage
+        :param outcome: dictionary that maps hitter to percentage
          the player contributed to team's hits
         """
         self.id = id

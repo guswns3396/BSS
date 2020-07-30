@@ -1,10 +1,11 @@
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, endpoint):
         self.name = name
+        self.endpoint = endpoint
 
 class Hitter(Player):
-    def __init__(self, name, pa, h, so, r, l):
-        super().__init__(name)
+    def __init__(self, name, endpoint, pa, h, so, r, l):
+        super().__init__(name, endpoint)
         self.PA = pa
         self.H = h
         self.SO = so
@@ -12,8 +13,8 @@ class Hitter(Player):
         self.L = l
 
 class Pitcher(Player):
-    def __init__(self, name, sho, ip, h, so, bf, r, l):
-        super().__init__(name)
+    def __init__(self, name, endpoint, sho, ip, h, so, bf, r, l):
+        super().__init__(name, endpoint)
         self.SHO = sho
         self.IP = ip
         self.H = h
