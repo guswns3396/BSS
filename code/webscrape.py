@@ -49,3 +49,26 @@ def extractTeamID(team):
         if char.isalpha():
             id += char
     return id
+
+def searchForTable(soup, id):
+    """
+    searches for the table given the id of the table even if it is commented out
+    :param soup: soup object containing the page
+    :param id: id of the table
+    :return: soup of table if found, None if not found
+    """
+    table = soup.find(id=id)
+    # in case data is commented out
+    if table == None:
+        comments = soup.find_all(string=lambda text: isinstance(text, Comment))
+        id = "id=\"" + id + "\""
+        for comment in comments:
+            if id in comment:
+                table = comment
+                table = table[len("<!--"):-len("-->")].strip()
+                table = BeautifulSoup(table, 'html.parser')
+                return table
+        # data not found even in comments:
+        return None
+    else:
+        return table

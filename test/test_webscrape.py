@@ -30,5 +30,26 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual("StLouisCardinals", team_id)
 
+    def test_searchForTable_searchesTableWithID(self):
+        endpoint = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "StLouisCardinalsbatting"
+
+        table = ws.searchForTable(soup, search_id)
+
+        caption = table.find("caption").string
+        self.assertEqual("St. Louis Cardinals Table", caption)
+
+    def test_searchForTable_returnsNoneIfNotFound(self):
+        endpoint = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "this_is_a_test_id"
+
+        table = ws.searchForTable(soup, search_id)
+
+        self.assertEqual(None, table)
+
 if __name__ == "__main__":
     unittest.main()
