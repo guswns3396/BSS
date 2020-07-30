@@ -104,22 +104,41 @@ def extractHitterOutcome(table, endpoint_player):
     h_contribution = h / h_total
     return h_contribution
 
-def extractPlayerCareerStats(endpoint_player, players_all, type, year):
+def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
+    """
+    checks if the player's last year stats exists
+    returns last year's stats if exists
+    returns 0 if not
+    :param endpoint_player: endpoint to player
+    :param type: 'hitter' or 'pitcher'
+    :param year_current: current year
+    :return: Player object corresponding to type with stats
+    """
+    
+
+def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     """
     extracts the player's stats for his entire career (up until the game)
     for input to the model
     :param endpoint_player: endpoint to player profile
-    :param players_all: list of Player objects to update if needed
+    :param players_stats: dict of Player objects to update if needed
     :param type: 'hitter' or 'pitcher'
     :param year: current year of season
-    :return: returns updated list of Player objects
+    :return: returns updated dict of Player objects
     """
     # invalid argument
     if type != 'hitter' and type != 'pitcher':
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
     # hitter
     elif type == 'hitter':
-        pass
+        # see if hitter in dict (not the first game of season)
+        if endpoint_player in players_stats:
+            pass
+        # if not in dict use last year's stats (first game of season)
+        else:
+            pass
+
     # pitcher
     else:
         pass
@@ -129,10 +148,23 @@ def extractTrainingSet():
     # including current year
     for i in range(START_YEAR,CURRENT_YEAR + 1):
         endpoints_game = extractGamesFromSeason(i)
+        hitters_stats = {}
+        pitchers_stats = {}
+
         # go through all games in the given year
         for endpoint_game in endpoints_game:
             page = requests.get(URL + endpoint_game)
             soup = BeautifulSoup(page.content, 'html.parser')
             team_away, team_home = extractTeams(soup)
+
+            ## Training Example for Away Team ##
+            hitters = []
+            pitchers = []
             # look at batting results of away team
-            table = searchForTable()
+            table = searchForTable(soup, extractTeamID(team_away) + 'batting')
+            # look at pitching results of home team
+            table = searchForTable(soup, extractTeamID(team_home) + 'pitching')
+
+            ## Training Example for Home Team ##
+            # look at batting results of home team
+            # look at pitching results of away team
