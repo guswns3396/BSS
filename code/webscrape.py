@@ -45,6 +45,7 @@ def extractTeamID(team):
     for char in team:
         if char.isalpha():
             id += char
+
     return id
 
 def searchForTable(soup, id):
@@ -59,14 +60,17 @@ def searchForTable(soup, id):
     if table == None:
         comments = soup.find_all(string=lambda text: isinstance(text, Comment))
         id = "id=\"" + id + "\""
+
         for comment in comments:
             if id in comment:
                 table = comment
                 table = table[len("<!--"):-len("-->")].strip()
                 table = BeautifulSoup(table, 'html.parser')
                 return table
+
         # data not found even in comments:
         return None
+
     else:
         return table
 
@@ -79,10 +83,12 @@ def extractPlayerEndpointsFromTable(table):
     endpoints = []
     tbody = table.find("tbody")
     trs = tbody.find_all("tr")
+
     for tr in trs:
         th = tr.select("th[data-stat='player']")[0]
         a = th.find("a")
         endpoints.append(a['href'])
+
     return endpoints
 
 def extractHitterOutcome(table, endpoint_player):
@@ -97,9 +103,11 @@ def extractHitterOutcome(table, endpoint_player):
     a = table.find(attrs={'href': endpoint_player})
     tr = a.find_parent("tr")
     h = int(tr.find(attrs={"data-stat":"H"}).string)
+
     # find team's total hits
     th = table.find(string="Team Totals").parent
     h_total = int(th.find_next_sibling(attrs={"data-stat":"H"}).string)
+    
     # calculate contribution
     h_contribution = h / h_total
     return h_contribution
@@ -114,7 +122,12 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     :param year_current: current year
     :return: Player object corresponding to type with stats
     """
-    
+    if type != 'hitter' and type != 'pitcher':
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+    page = requests.get(URL + endpoint_player)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+
 
 def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     """
