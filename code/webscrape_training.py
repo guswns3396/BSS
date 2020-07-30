@@ -49,6 +49,3 @@ def extractTeamID(team):
         if char.isalpha():
             id += char
     return id
-
-def extractBattingTable(teamID):
-    pass
