@@ -22,15 +22,12 @@ def extractGamesFromSeason(year):
 
     return endpoints
 
-def extractTeams(endpoint_game):
+def extractTeams(soup):
     """
     extracts away & home team names
-    :param endpoint_game: endpoint to game
+    :param soup: Soup object of game
     :return: away & home team names
     """
-    page = requests.get(URL + endpoint_game)
-    soup = BeautifulSoup(page.content, 'html.parser')
-
     scorebox = soup.find(class_="scorebox")
     strong = scorebox.find_all(attrs={"itemprop": "name"})
     team_away = strong[0].string
@@ -126,3 +123,16 @@ def extractPlayerCareerStats(endpoint_player, players_all, type, year):
     # pitcher
     else:
         pass
+
+def extractTrainingSet():
+    # go through all the seasons from start year to current year
+    # including current year
+    for i in range(START_YEAR,CURRENT_YEAR + 1):
+        endpoints_game = extractGamesFromSeason(i)
+        # go through all games in the given year
+        for endpoint_game in endpoints_game:
+            page = requests.get(URL + endpoint_game)
+            soup = BeautifulSoup(page.content, 'html.parser')
+            team_away, team_home = extractTeams(soup)
+            # look at batting results of away team
+            table = searchForTable()
