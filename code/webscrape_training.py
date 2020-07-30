@@ -16,6 +16,9 @@ def extractGamesFromSeason(year):
     page = requests.get(URL + endpoint_schedule)
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    results = soup.find_all(string="Boxscore")
+    endpoints = []
+    endpoints = soup.find_all(string="Boxscore")
+    for i in range(len(endpoints)):
+        endpoints[i] = endpoints[i].parent['href']
 
-    print(results)
+    return endpoints
