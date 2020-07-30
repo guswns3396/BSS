@@ -72,3 +72,24 @@ def searchForTable(soup, id):
         return None
     else:
         return table
+
+def extractPlayerEndpointsFromTable(table):
+    """
+    extracts endpoints of each player from given table
+    :param table: table Tag object
+    :return: list of player endpoints
+    """
+    endpoints = []
+    tbody = table.find("tbody")
+    trs = tbody.find_all("tr")
+    for tr in trs:
+        th = tr.select("th[data-stat='player']")[0]
+        a = th.find("a")
+        endpoints.append(a['href'])
+    return endpoints
+
+def extractPlayerStats_Career(endpoint_player, type):
+    pass
+
+def extractPlayerStats_Game(endpoint_player, type):
+    pass

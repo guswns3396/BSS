@@ -51,5 +51,27 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual(None, table)
 
+    def test_extractPlayerEndpointsFromTable_extractsCorrectEndpoint(self):
+        endpoint = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "StLouisCardinalsbatting"
+        table = ws.searchForTable(soup, search_id)
+
+        endpoint_players = ws.extractPlayerEndpointsFromTable(table)
+
+        self.assertEqual("/players/c/carpema01.shtml", endpoint_players[0])
+
+    def test_extractPlayerEndpointsFromTable_extractsAllEndpoints(self):
+        endpoint = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "StLouisCardinalsbatting"
+        table = ws.searchForTable(soup, search_id)
+
+        endpoint_players = ws.extractPlayerEndpointsFromTable(table)
+
+        self.assertEqual(14, len(endpoint_players))
+
 if __name__ == "__main__":
     unittest.main()
