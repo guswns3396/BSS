@@ -148,6 +148,18 @@ class TestWebscrape(unittest.TestCase):
         # cannot find case (not in bio)
         pass
 
+    def test_extractPlayerHand_raisesExceptionIfInvalidArgument(self):
+        endpoint = "/players/c/cokeph01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        with self.assertRaises(Exception) as ctx:
+            r, l = ws.extractPlayerHand(div, '')
+
+        self.assertIsInstance(ctx.exception, ValueError)
+
     def test_extractSeasonStatsFromTable_defaultIfTableNotFoundHitter(self):
         output = ws.extractSeasonStatsFromTable(None, 'hitter', 2020)
 
