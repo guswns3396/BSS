@@ -224,10 +224,79 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertIsInstance(ctx.exception, ValueError)
 
-    def test_checkPlayersLastSeasonStats_(self):
+    def test_checkPlayersLastSeasonStats_raisesExceptionIfInvalidArgument(self):
         endpoint = "/players/c/carpema01.shtml"
 
-        ws.checkPlayersLastSeasonStats(endpoint, 'hitter', 2020)
+        with self.assertRaises(Exception) as ctx:
+            player = ws.checkPlayersLastSeasonStats(endpoint, '', 2020)
+
+        self.assertIsInstance(ctx.exception, ValueError)
+
+    def test_checkPlayersLastSeasonStats_extractsCorrectStatsHitter(self):
+        endpoint = "/players/c/carpema01.shtml"
+
+        hitter = ws.checkPlayersLastSeasonStats(endpoint, 'hitter', 2014)
+
+        isCorrect = hitter.PA == 717 and hitter.H == 199
+        isCorrect = isCorrect and hitter.SO == 98
+        isCorrect = isCorrect and hitter.R == 0 and hitter.L == 1
+        self.assertTrue(isCorrect)
+
+    def test_checkPlayersLastSeasonStats_extractsCorrectStatsPichter(self):
+        endpoint = "/players/w/wainwad01.shtml"
+
+        pitcher = ws.checkPlayersLastSeasonStats(endpoint, 'pitcher', 2014)
+
+        isCorrect = pitcher.SHO == 2 and pitcher.IP == 241.2
+        isCorrect = isCorrect and pitcher.H == 223
+        isCorrect = isCorrect and pitcher.SO == 219
+        isCorrect = isCorrect and pitcher.BF == 956
+        isCorrect = isCorrect and pitcher.R == 1 and pitcher.L == 0
+        self.assertTrue(isCorrect)
+
+    def test_checkPlayersLastSeasonStats_deafultIfNoTableHitter(self):
+        endpoint = "/players/w/widenta01.shtml"
+
+        hitter = ws.checkPlayersLastSeasonStats(endpoint, 'hitter', 2014)
+
+        isCorrect = hitter.PA == 0 and hitter.H == 0
+        isCorrect = isCorrect and hitter.SO == 0
+        isCorrect = isCorrect and hitter.R == 0 and hitter.L == 1
+        self.assertTrue(isCorrect)
+
+    def test_checkPlayersLastSeasonStats_deafultIfNoTablePitcher(self):
+        endpoint = "/players/c/carpema01.shtml"
+
+        pitcher = ws.checkPlayersLastSeasonStats(endpoint, 'pitcher', 2014)
+
+        isCorrect = pitcher.SHO == 0 and pitcher.IP == 0
+        isCorrect = isCorrect and pitcher.H == 0
+        isCorrect = isCorrect and pitcher.SO == 0
+        isCorrect = isCorrect and pitcher.BF == 0
+        isCorrect = isCorrect and pitcher.R == 1 and pitcher.L == 0
+        self.assertTrue(isCorrect)
+
+    def test_checkPlayersLastSeasonStats_deafultIfYearNotFoundHitter(self):
+        endpoint = "/players/c/carpema01.shtml"
+
+        hitter = ws.checkPlayersLastSeasonStats(endpoint, 'hitter', 2011)
+
+        isCorrect = hitter.PA == 0 and hitter.H == 0
+        isCorrect = isCorrect and hitter.SO == 0
+        isCorrect = isCorrect and hitter.R == 0 and hitter.L == 1
+        self.assertTrue(isCorrect)
+
+    def test_checkPlayersLastSeasonStats_deafultIfYearNotFoundPitcher(self):
+        endpoint = "/players/w/wainwad01.shtml"
+
+        pitcher = ws.checkPlayersLastSeasonStats(endpoint, 'pitcher', 2012)
+
+        isCorrect = pitcher.SHO == 0 and pitcher.IP == 0
+        isCorrect = isCorrect and pitcher.H == 0
+        isCorrect = isCorrect and pitcher.SO == 0
+        isCorrect = isCorrect and pitcher.BF == 0
+        isCorrect = isCorrect and pitcher.R == 1 and pitcher.L == 0
+        self.assertTrue(isCorrect)
 
 if __name__ == "__main__":
     unittest.main()
