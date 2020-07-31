@@ -207,7 +207,7 @@ def extractSeasonStatsFromTable(table, type, year):
     else:
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
 
-def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
+def checkPlayersLastSeasonStats(endpoint_player, type, year):
     """
     checks if the player's last year stats exists
     uses last year's stats if exists
@@ -215,7 +215,7 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     then returns Player object with stats
     :param endpoint_player: endpoint to player
     :param type: 'hitter' or 'pitcher'
-    :param year_current: current year
+    :param year: year of the current season that you want the stats for
     :return: Player object corresponding to type with stats
     """
     if type != 'hitter' and type != 'pitcher':
@@ -233,7 +233,7 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
         table = searchForTable(soup, 'batting_standard')
     else:
         table = searchForTable(soup, "pitching_standard")
-    data = extractSeasonStatsFromTable(table, type, year_current - 1)
+    data = extractSeasonStatsFromTable(table, type, year - 1)
 
     if type == 'hitter':
         return Player.Hitter(name, endpoint_player, data['PA'],
