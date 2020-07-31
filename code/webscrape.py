@@ -157,6 +157,7 @@ def extractSeasonStatsFromTable(table, type, year):
     """
     parses necessary data from the player's season stats table depending on the type
     if table is None, default values are used
+    if given year's stats don't exist, default values are used
     :param table: table Tag object of player's stats
     :param type: 'hitter' or 'pitcher'
     :param year: year of season to extract data from
@@ -164,35 +165,39 @@ def extractSeasonStatsFromTable(table, type, year):
     """
     data = {}
     if type == "hitter":
-        # in case search not found
+        # default values
         pa = 0
         h = 0
         so = 0
-        # in case search found
+        # table found
         if table != None:
             tr = table.find(id="batting_standard." + str(year))
-            pa = int(tr.find(attrs={'data-stat': 'PA'}).string)
-            h = int(tr.find(attrs={'data-stat': 'H'}).string)
-            so = int(tr.find(attrs={'data-stat': 'SO'}).string)
+            # year found
+            if tr != None:
+                pa = int(tr.find(attrs={'data-stat': 'PA'}).string)
+                h = int(tr.find(attrs={'data-stat': 'H'}).string)
+                so = int(tr.find(attrs={'data-stat': 'SO'}).string)
         data['PA'] = pa
         data['H'] = h
         data['SO'] = so
         return data
     elif type == "pitcher":
-        # in case search not found
+        # default values
         sho = 0
         ip = 0
         h = 0
         so = 0
         bf = 0
-        # in case search found
+        # if table found
         if table != None:
             tr = table.find(id="pitching_standard." + str(year))
-            sho = int(tr.find(attrs={'data-stat': 'SHO'}).string)
-            ip = float(tr.find(attrs={'data-stat': 'IP'}).string)
-            h = int(tr.find(attrs={'data-stat': 'H'}).string)
-            so = int(tr.find(attrs={'data-stat': 'SO'}).string)
-            bf = int(tr.find(attrs={'data-stat': 'BF'}).string)
+            # if year found
+            if tr != None:
+                sho = int(tr.find(attrs={'data-stat': 'SHO'}).string)
+                ip = float(tr.find(attrs={'data-stat': 'IP'}).string)
+                h = int(tr.find(attrs={'data-stat': 'H'}).string)
+                so = int(tr.find(attrs={'data-stat': 'SO'}).string)
+                bf = int(tr.find(attrs={'data-stat': 'batters_faced'}).string)
         data['SHO'] = sho
         data['IP'] = ip
         data['H'] = h
@@ -202,12 +207,12 @@ def extractSeasonStatsFromTable(table, type, year):
     else:
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
 
-
 def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     """
     checks if the player's last year stats exists
-    returns last year's stats if exists
-    returns 0 if not
+    uses last year's stats if exists
+    uses default stats (0) if not
+    then returns Player object with stats
     :param endpoint_player: endpoint to player
     :param type: 'hitter' or 'pitcher'
     :param year_current: current year

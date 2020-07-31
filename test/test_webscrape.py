@@ -148,6 +148,62 @@ class TestWebscrape(unittest.TestCase):
         # cannot find case (not in bio)
         pass
 
+    def test_extractSeasonStatsFromTable_defaultIfTableNotFoundHitter(self):
+        output = ws.extractSeasonStatsFromTable(None, 'hitter', 2020)
+
+        expected = {'PA': 0, 'H': 0, 'SO': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractSeasonStatsFromTable_defaultIfTableNotFoundPitcher(self):
+        output = ws.extractSeasonStatsFromTable(None, 'pitcher', 2020)
+
+        expected = {'SHO': 0, 'IP': 0.0, 'H': 0, 'SO': 0, 'BF': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractSeasonStatsFromTable_defaultIfYearNotFoundHitter(self):
+        endpoint = "/players/w/wainwad01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'batting_standard')
+
+        output = ws.extractSeasonStatsFromTable(table, 'hitter', 2021)
+
+        expected = {'PA': 0, 'H': 0, 'SO': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractSeasonStatsFromTable_defaultIfYearNotFoundPitcher(self):
+        endpoint = "/players/w/wainwad01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'pitching_standard')
+
+        output = ws.extractSeasonStatsFromTable(table, 'pitcher', 2021)
+
+        expected = {'SHO': 0, 'IP': 0.0, 'H': 0, 'SO': 0, 'BF': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractSeasonStatsFromTable_extractsStatsHitter(self):
+        endpoint = "/players/w/wainwad01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'batting_standard')
+
+        output = ws.extractSeasonStatsFromTable(table, 'hitter', 2007)
+
+        expected = {'PA': 74, 'H': 18, 'SO': 18}
+        self.assertEqual(expected, output)
+
+    def test_extractSeasonStatsFromTable_extractsStatsPitcher(self):
+        endpoint = "/players/w/wainwad01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'pitching_standard')
+
+        output = ws.extractSeasonStatsFromTable(table, 'pitcher', 2010)
+
+        expected = {'SHO': 2, 'IP': 230.1, 'H': 186, 'SO': 213, 'BF': 910}
+        self.assertEqual(expected, output)
+
     def test_checkPlayersLastSeasonStats_(self):
         endpoint = "/players/c/carpema01.shtml"
 
