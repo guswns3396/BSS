@@ -153,6 +153,56 @@ def extractPlayerHand(div, type):
             r = 1
     return r, l
 
+def extractSeasonStatsFromTable(table, type, year):
+    """
+    parses necessary data from the player's season stats table depending on the type
+    if table is None, default values are used
+    :param table: table Tag object of player's stats
+    :param type: 'hitter' or 'pitcher'
+    :param year: year of season to extract data from
+    :return: dict of player's stats required to instantiate Player class
+    """
+    data = {}
+    if type == "hitter":
+        # in case search not found
+        pa = 0
+        h = 0
+        so = 0
+        # in case search found
+        if table != None:
+            tr = table.find(id="batting_standard." + str(year))
+            pa = int(tr.find(attrs={'data-stat': 'PA'}).string)
+            h = int(tr.find(attrs={'data-stat': 'H'}).string)
+            so = int(tr.find(attrs={'data-stat': 'SO'}).string)
+        data['PA'] = pa
+        data['H'] = h
+        data['SO'] = so
+        return data
+    elif type == "pitcher":
+        # in case search not found
+        sho = 0
+        ip = 0
+        h = 0
+        so = 0
+        bf = 0
+        # in case search found
+        if table != None:
+            tr = table.find(id="pitching_standard." + str(year))
+            sho = int(tr.find(attrs={'data-stat': 'SHO'}).string)
+            ip = float(tr.find(attrs={'data-stat': 'IP'}).string)
+            h = int(tr.find(attrs={'data-stat': 'H'}).string)
+            so = int(tr.find(attrs={'data-stat': 'SO'}).string)
+            bf = int(tr.find(attrs={'data-stat': 'BF'}).string)
+        data['SHO'] = sho
+        data['IP'] = ip
+        data['H'] = h
+        data['SO'] = so
+        data['BF'] = bf
+        return data
+    else:
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
+
 def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     """
     checks if the player's last year stats exists
@@ -173,19 +223,12 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     div = soup.select(selector)[0]
 
     name = extractPlayerName(div)
-    # extract other data
+    r, l = extractPlayerHand(div, type)
     if type == 'hitter':
-        r, l = extractPlayerHand(div, type)
         table = searchForTable(soup, 'batting_standard')
-        # default if table X exist
-        if table == None:
-            return Player.Hitter(name,endpoint_player,0,0,0,r,l)
-        # parse table
-        else:
-            pass
     else:
-        r, l = extractPlayerHand(div, type)
         table = searchForTable(soup, "pitching_standard")
+    data = extractSeasonStatsFromTable(table, type, year_current-1)
 
 def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     """
