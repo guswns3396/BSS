@@ -216,6 +216,14 @@ class TestWebscrape(unittest.TestCase):
         expected = {'SHO': 2, 'IP': 230.1, 'H': 186, 'SO': 213, 'BF': 910}
         self.assertEqual(expected, output)
 
+    def test_extractSeasonStatsFromTable_raisesExceptionIfInvalidArgument(self):
+        table = ws.BeautifulSoup("")
+
+        with self.assertRaises(Exception) as ctx:
+            output = ws.extractSeasonStatsFromTable(table, '', 2010)
+
+        self.assertIsInstance(ctx.exception, ValueError)
+
     def test_checkPlayersLastSeasonStats_(self):
         endpoint = "/players/c/carpema01.shtml"
 
