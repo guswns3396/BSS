@@ -85,5 +85,23 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual(3/10, h_contribution)
 
+    def test_extractPlayerName_extractsCorrectName(self):
+        endpoint = "/players/p/peraljh01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        name = ws.extractPlayerName(div)
+
+        self.assertEqual("Jhonny Peralta", name)
+
+    
+
+    def test_checkPlayersLastSeasonStats_(self):
+        endpoint = "/players/c/carpema01.shtml"
+
+        ws.checkPlayersLastSeasonStats(endpoint, 'hitter', 2020)
+
 if __name__ == "__main__":
     unittest.main()

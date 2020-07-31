@@ -1,4 +1,5 @@
 import requests
+import code.Player as Player
 from bs4 import BeautifulSoup
 from bs4 import Comment
 
@@ -112,6 +113,46 @@ def extractHitterOutcome(table, endpoint_player):
     h_contribution = h / h_total
     return h_contribution
 
+def extractPlayerName(div):
+    """
+    parses player's name
+    :param div: div Tag object of player's overview
+    :return: name of player
+    """
+    selector = " h1[itemprop='name']"
+    h1 = div.select(selector)[0]
+    name = h1.find("span").string
+    return name
+
+def extractPlayerHand(div, type):
+    """
+    parses player's dominant hand depending on type
+    r => right, l => left
+    1 => uses that hand, 0 => does not use that hand
+    :param div: div Tag object of player's overview
+    :param type: 'hitter' or 'pitcher'
+    :return: r & l
+    """
+    if type != 'hitter' and type != 'pitcher':
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
+    r = 0
+    l = 0
+    hand = div.find('p').find_next_sibling('p').contents
+    if type == 'hitter':
+        hand = hand[2]
+        if 'left' in hand.lower():
+            l = 1
+        if 'right' in hand.lower():
+            r = 1
+    else:
+        hand = hand[4]
+        if 'left' in hand.lower():
+            l = 1
+        if 'right' in hand.lower():
+            r = 1
+    return r, l
+
 def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     """
     checks if the player's last year stats exists
@@ -124,10 +165,27 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
     """
     if type != 'hitter' and type != 'pitcher':
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
     page = requests.get(URL + endpoint_player)
     soup = BeautifulSoup(page.content, 'html.parser')
 
+    selector = "#meta div[itemtype='https://schema.org/Person']"
+    div = soup.select(selector)[0]
 
+    name = extractPlayerName(div)
+    # extract other data
+    if type == 'hitter':
+        r, l = extractPlayerHand(div, type)
+        table = searchForTable(soup, 'batting_standard')
+        # default if table X exist
+        if table == None:
+            return Player.Hitter(name,endpoint_player,0,0,0,r,l)
+        # parse table
+        else:
+            pass
+    else:
+        r, l = extractPlayerHand(div, type)
+        table = searchForTable(soup, "pitching_standard")
 
 def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     """
