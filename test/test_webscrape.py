@@ -96,7 +96,57 @@ class TestWebscrape(unittest.TestCase):
 
         self.assertEqual("Jhonny Peralta", name)
 
-    
+    def test_extractPlayerHand_extractsHitterRight(self):
+        endpoint = "/players/p/peraljh01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        r, l = ws.extractPlayerHand(div, 'hitter')
+
+        self.assertTrue(r == 1 and l == 0)
+
+    def test_extractPlayerHand_extractsHittersLeft(self):
+        endpoint = "/players/c/carpema01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        r, l = ws.extractPlayerHand(div, 'hitter')
+
+        self.assertTrue(r == 0 and l == 1)
+
+    def test_extractPlayerHand_extractsHitterBoth(self):
+        # cannot find case (not in bio)
+        pass
+
+    def test_extractPlayerHand_extractsPitcherRight(self):
+        endpoint = "/players/w/wainwad01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        r, l = ws.extractPlayerHand(div, 'pitcher')
+
+        self.assertTrue(r == 1 and l == 0)
+
+    def test_extractPlayerHand_extractsPitcherLeft(self):
+        endpoint = "/players/c/cokeph01.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        selector = "#meta div[itemtype='https://schema.org/Person']"
+        div = soup.select(selector)[0]
+
+        r, l = ws.extractPlayerHand(div, 'pitcher')
+
+        self.assertTrue(r == 0 and l == 1)
+
+    def test_extractPlayerHand_extractsPitcherBoth(self):
+        # cannot find case (not in bio)
+        pass
 
     def test_checkPlayersLastSeasonStats_(self):
         endpoint = "/players/c/carpema01.shtml"
