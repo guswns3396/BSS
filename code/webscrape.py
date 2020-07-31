@@ -233,7 +233,15 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year_current):
         table = searchForTable(soup, 'batting_standard')
     else:
         table = searchForTable(soup, "pitching_standard")
-    data = extractSeasonStatsFromTable(table, type, year_current-1)
+    data = extractSeasonStatsFromTable(table, type, year_current - 1)
+
+    if type == 'hitter':
+        return Player.Hitter(name, endpoint_player, data['PA'],
+                             data['H'], data['SO'], r, l)
+    else:
+        return Player.Pitcher(name, endpoint_player, data['SHO'],
+                              data['IP'], data['H'], data['SO'],
+                              data['BF'], r, l)
 
 def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     """
