@@ -1,6 +1,6 @@
 import requests
-import code.Player as Player
-import code.Game as Game
+from code.Player import Hitter, Pitcher
+from code.Game import Game
 from bs4 import BeautifulSoup
 from bs4 import Comment
 
@@ -237,10 +237,10 @@ def checkPlayersLastSeasonStats(endpoint_player, type, year):
     data = extractSeasonStatsFromTable(table, type, year - 1)
 
     if type == 'hitter':
-        return Player.Hitter(name, endpoint_player, data['PA'],
+        return Hitter(name, endpoint_player, data['PA'],
                              data['H'], data['SO'], r, l)
     else:
-        return Player.Pitcher(name, endpoint_player, data['SHO'],
+        return Pitcher(name, endpoint_player, data['SHO'],
                               data['IP'], data['H'], data['SO'],
                               data['BF'], r, l)
 
@@ -250,7 +250,7 @@ def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     updates the dict
     returns Player object for input to model
     :param endpoint_player: endpoint to player profile
-    :param players_stats: dict of Player objects to update if needed
+    :param players_stats: dict that maps player endpoint to Player objects
     :param type: 'hitter' or 'pitcher'
     :param year: current year of season
     :return: returns Player object
@@ -259,18 +259,44 @@ def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     if type != 'hitter' and type != 'pitcher':
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
 
+    players_stats[endpoint_player] = checkPlayersLastSeasonStats(endpoint_player, type, year)
     # hitter
-    elif type == 'hitter':
+    if type == 'hitter':
         # see if hitter in dict (not the first game of season)
         if endpoint_player in players_stats:
             pass
-        # if not in dict use last year's stats (first game of season)
-        else:
-            pass
+        # if not in dict use last year's stats (first game of season
 
     # pitcher
     else:
         pass
+
+def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, type, team_batting, team_pitching, year):
+    # list of Player objects for input
+    hitters = []
+    pitchers = []
+    # dictionary that maps hitter endpoint to outcome (H_Contribution)
+    outcome = {}
+    # look at batting results of away team
+    table_results_batting = searchForTable(soup, extractTeamID(team_batting) + 'batting')
+    endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
+    for endpoint_player in endpoints_player:
+        # get player's stats up until the game & get input for model
+        hitters.append(extractPlayerCareerStats(endpoint_player, hitters_stats, 'hitter', year))
+        outcome[endpoint_player] = extractHitterOutcome(table_results_batting, endpoint_player)
+    # look at pitching results of home team
+    table_results_pitching = searchForTable(soup, extractTeamID(team_pitching) + 'pitching')
+    endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
+    for endpoint_player in endpoints_player:
+        # get player's stats up until the game & get input for model
+        pitchers.append(extractPlayerCareerStats(endpoint_player, pitchers_stats, 'pitcher', year))
+    # instantiate Game object for training example
+    if type == 'away':
+        return Game(endpoint_game + '-A', hitters, pitchers, outcome)
+    elif type == 'home':
+        return Game(endpoint_game + '-H', hitters, pitchers, outcome)
+    else:
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
 
 def extractTrainingSet(year_start, year_current):
     """
@@ -296,47 +322,8 @@ def extractTrainingSet(year_start, year_current):
             team_away, team_home = extractTeams(soup)
 
             ## Training Example for Away Team ##
-            # list of Player objects for input
-            hitters = []
-            pitchers = []
-            # dictionary that maps hitter endpoint to outcome (H_Contribution)
-            outcome = {}
-            # look at batting results of away team
-            table_results_batting = searchForTable(soup, extractTeamID(team_away) + 'batting')
-            endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
-            for endpoint_player in endpoints_player:
-                # get player's stats up until the game & get input for model
-                hitters.append(extractPlayerCareerStats(endpoint_player,hitters_stats,'hitter',year))
-                outcome[endpoint_player] = extractHitterOutcome(table_results_batting,endpoint_player)
-            # look at pitching results of home team
-            table_results_pitching = searchForTable(soup, extractTeamID(team_home) + 'pitching')
-            endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
-            for endpoint_player in endpoints_player:
-                # get player's stats up until the game & get input for model
-                pitchers.append(extractPlayerCareerStats(endpoint_player,pitchers_stats,'pitcher',year))
-            # instantiate Game object for training example
-            games.append(Game(endpoint_game + '-A', hitters, pitchers, outcome))
-
+            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home))
             ## Training Example for Home Team ##
-            # list of Player objects for input
-            hitters = []
-            pitchers = []
-            # dictionary that maps hitter endpoint to outcome (H_Contribution)
-            outcome = {}
-            # look at batting results of away team
-            table_results_batting = searchForTable(soup, extractTeamID(team_home) + 'batting')
-            endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
-            for endpoint_player in endpoints_player:
-                # get player's stats up until the game & get input for model
-                hitters.append(extractPlayerCareerStats(endpoint_player, hitters_stats, 'hitter', year))
-                outcome[endpoint_player] = extractHitterOutcome(table_results_batting, endpoint_player)
-            # look at pitching results of home team
-            table_results_pitching = searchForTable(soup, extractTeamID(team_away) + 'pitching')
-            endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
-            for endpoint_player in endpoints_player:
-                # get player's stats up until the game & get input for model
-                pitchers.append(extractPlayerCareerStats(endpoint_player, pitchers_stats, 'pitcher', year))
-            # instantiate Game object for training example
-            games.append(Game(endpoint_game + '-H', hitters, pitchers, outcome))
+            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'home',team_home,team_away))
 
-            return games
+    return games
