@@ -12,6 +12,14 @@ class Hitter(Player):
         self.R = r
         self.L = l
 
+    def __deepcopy__(self, memodict={}):
+        id_self = id(self)
+        _copy = memodict.get(id_self)
+        if _copy is None:
+            _copy = Hitter(self.name, self.endpoint, self.PA, self.H, self.SO, self.R, self.L)
+            memodict[id_self] = _copy
+        return _copy
+
     def __eq__(self, other):
         if not isinstance(other, Hitter):
             raise NotImplemented
@@ -42,6 +50,14 @@ class Pitcher(Player):
         self.BF = bf
         self.R = r
         self.L = l
+
+    def __deepcopy__(self, memodict={}):
+        id_self = id(self)
+        _copy = memodict.get(id_self)
+        if _copy is None:
+            _copy = Pitcher(self.name, self.endpoint, self.SHO, self.IP, self.H, self.SO, self.BF, self.R, self.L)
+            memodict[id_self] = _copy
+        return _copy
 
     def __eq__(self, other):
         if not isinstance(other, Pitcher):
