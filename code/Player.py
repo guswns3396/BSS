@@ -15,12 +15,14 @@ class Hitter(Player):
     def __eq__(self, other):
         if not isinstance(other, Hitter):
             raise NotImplemented
+        eqName = self.name == other.name
+        eqEndpoint = self.endpoint == other.endpoint
         eqPA = self.PA  == other.PA
         eqH = self.H == other.H
         eqSO = self.SO == other.SO
         eqR = self.R == other.R
         eqL = self.L == other.L
-        if eqPA and eqH and eqSO and eqR and eqL:
+        if eqName and eqEndpoint and eqPA and eqH and eqSO and eqR and eqL:
             return True
         else:
             return False
@@ -44,6 +46,8 @@ class Pitcher(Player):
     def __eq__(self, other):
         if not isinstance(other, Pitcher):
             raise NotImplemented
+        eqName = self.name == other.name
+        eqEndpoint = self.endpoint == other.endpoint
         eqSHO = self.SHO  == other.SHO
         eqIP = self.IP == other.IP
         eqH = self.H == other.H
@@ -51,7 +55,7 @@ class Pitcher(Player):
         eqBF = self.BF == other.BF
         eqR = self.R == other.R
         eqL = self.L == other.L
-        if eqSHO and eqIP and eqH and eqSO and eqBF and eqR and eqL:
+        if eqName and eqEndpoint and eqSHO and eqIP and eqH and eqSO and eqBF and eqR and eqL:
             return True
         else:
             return False
