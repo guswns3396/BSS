@@ -298,5 +298,53 @@ class TestWebscrape(unittest.TestCase):
         isCorrect = isCorrect and pitcher.R == 1 and pitcher.L == 0
         self.assertTrue(isCorrect)
 
+    def test_extractPlayerGamePerformance_extractsHitterData(self):
+        endpoint_player = "/players/c/carpema01.shtml"
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'StLouisCardinalsbatting')
+
+        output = ws.extractPlayerGamePerformance(table, endpoint_player, 'hitter')
+
+        expected = {'PA': 5, 'H': 2, 'SO': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractPlayerGamePerformance_extractsPitcherData_noSHO(self):
+        endpoint_player = "/players/w/wainwad01.shtml"
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'StLouisCardinalspitching')
+
+        output = ws.extractPlayerGamePerformance(table, endpoint_player, 'pitcher')
+
+        expected = {'IP': 6, 'H': 5, 'SO': 6, 'BF': 23, 'SHO': 0}
+        self.assertEqual(expected, output)
+
+    def test_extractPlayerGamePerformance_extractsPitcherData_SHO(self):
+        endpoint_player = "/players/t/tanakma01.shtml"
+        endpoint_game = "/boxes/TBA/TBA201807240.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'NewYorkYankeespitching')
+
+        output = ws.extractPlayerGamePerformance(table, endpoint_player, 'pitcher')
+
+        expected = {'IP': 9, 'H': 3, 'SO': 9, 'BF': 29, 'SHO': 1}
+        self.assertEqual(expected, output)
+
+    def test_extractPlayerGamePerformance_raisesExceptionIfInvalidArgument(self):
+        endpoint_player = "/players/t/tanakma01.shtml"
+        endpoint_game = "/boxes/TBA/TBA201807240.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        table = ws.searchForTable(soup, 'NewYorkYankeespitching')
+
+        with self.assertRaises(Exception) as ctx:
+            output = ws.extractPlayerGamePerformance(table, endpoint_player, '')
+
+        self.assertIsInstance(ctx.exception, ValueError)
+
 if __name__ == "__main__":
     unittest.main()
