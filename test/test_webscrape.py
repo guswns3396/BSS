@@ -9,8 +9,10 @@ class TestWebscrape(unittest.TestCase):
 
     def test_extractTeams_extractsTeams(self):
         endpoint_game = "/boxes/ARI/ARI201504060.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
 
-        team_away, team_home = ws.extractTeams(endpoint_game)
+        team_away, team_home = ws.extractTeams(soup)
 
         isAway = team_away == "San Francisco Giants"
         isHome = team_home == "Arizona Diamondbacks"
@@ -345,6 +347,37 @@ class TestWebscrape(unittest.TestCase):
             output = ws.extractPlayerGamePerformance(table, endpoint_player, '')
 
         self.assertIsInstance(ctx.exception, ValueError)
+
+    def test_extractPlayerCareerStats_raisesExceptionIfInvalidArgument(self):
+        with self.assertRaises(Exception) as ctx:
+            ws.extractPlayerCareerStats("",{},'',0)
+
+        self.assertIsInstance(ctx.exception, ValueError)
+
+    def test_extractPlayerCareerStats_playerNotInDict(self):
+        player_stats = {}
+        endpoint_player = "/players/w/wainwad01.shtml"
+
+        output = ws.extractPlayerCareerStats(endpoint_player, player_stats, 'pitcher', 2015)
+
+        expected = ws.Pitcher('Adam Wainwright', endpoint_player, 3, 227.0, 184, 179, 898, 1, 0)
+        self.assertEqual(expected, output)
+
+    def test_extractPlayerCareerStats_playerInDict(self):
+        endpoint_player = "/players/w/wainwad01.shtml"
+        player_stats = {endpoint_player: ws.Pitcher('Adam Wainwright', endpoint_player, 3, 227.0, 184, 179, 898, 1, 0)}
+
+        output = ws.extractPlayerCareerStats(endpoint_player, player_stats, 'pitcher', 2015)
+
+        self.assertEqual(player_stats[endpoint_player], output)
+
+    def test_extractPlayerCareerStats_addsPlayerToDict(self):
+        player_stats = {}
+        endpoint_player = "/players/w/wainwad01.shtml"
+
+        output = ws.extractPlayerCareerStats(endpoint_player, player_stats, 'pitcher', 2015)
+
+        self.assertTrue(endpoint_player in player_stats)
 
 if __name__ == "__main__":
     unittest.main()
