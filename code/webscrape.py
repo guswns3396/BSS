@@ -6,8 +6,6 @@ from bs4 import BeautifulSoup
 from bs4 import Comment
 
 URL = 'https://www.baseball-reference.com'
-YEAR_CURRENT = 2020
-YEAR_START = 2019
 
 def extractGamesFromSeason(year):
     """
