@@ -436,19 +436,100 @@ class TestWebscrape(unittest.TestCase):
         self.assertEqual(expected, pitchers_stats['/players/c/cokeph01.shtml'])
 
     def test_extractTrainingExample_makesDeepCopyHitters(self):
-        pass
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'away', team_away,
+                                         team_home, 2015)
+        hitter = game.hitters[0]
+        print(hitter, hitters_stats[hitter.endpoint])
+        self.assertNotEqual(hitter, hitters_stats[hitter.endpoint])
 
     def test_extractTrainingExample_makesDeepCopyPitchers(self):
-        pass
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
 
-    def test_extractTrainingExample_instantiatesGameHome(self):
-        pass
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'away', team_away,
+                                         team_home, 2015)
+        pitcher = game.pitchers[0]
+        print(pitcher, pitchers_stats[pitcher.endpoint])
+        self.assertNotEqual(pitcher, pitchers_stats[pitcher.endpoint])
 
-    def test_extractTrainingExample_instantiatesGameAway(self):
-        pass
+    def test_extractTrainingExample_instantiatesCorrectGameHome(self):
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'home', team_home,
+                                         team_away, 2015)
+
+        expected_id = '/boxes/CHN/CHN201504050.shtml-H'
+        expected_len_hitters = 16
+        expected_len_pitchers = 4
+        expected_outcome = {'/players/f/fowlede01.shtml': 1/5,
+                            '/players/c/castrst01.shtml': 1/5,
+                            '/players/c/coghlch01.shtml': 1/5,
+                            '/players/r/rossda01.shtml': 1/5,
+                            '/players/l/lasteto01.shtml': 1/5
+                            }
+        isCorrect = True
+        for outcome in expected_outcome:
+            if game.outcome[outcome] != expected_outcome[outcome]:
+                isCorrect = False
+        self.assertTrue(expected_id == game.id and expected_len_hitters == len(game.hitters) and
+                        expected_len_pitchers == len(game.pitchers) and isCorrect)
+
+    def test_extractTrainingExample_instantiatesCorrectGameAway(self):
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'away', team_away,
+                                         team_home, 2015)
+
+        expected_id = '/boxes/CHN/CHN201504050.shtml-A'
+        expected_len_hitters = 14
+        expected_len_pitchers = 6
+        expected_outcome = {'/players/c/carpema01.shtml': 2 / 10,
+                            '/players/h/heywaja01.shtml': 3 / 10,
+                            '/players/h/hollima01.shtml': 2 / 10,
+                            '/players/p/peraljh01.shtml': 1 / 10,
+                            '/players/j/jayjo02.shtml': 2 / 10
+                            }
+        isCorrect = True
+        for outcome in expected_outcome:
+            if game.outcome[outcome] != expected_outcome[outcome]:
+                isCorrect = False
+        self.assertTrue(expected_id == game.id and expected_len_hitters == len(game.hitters) and
+                        expected_len_pitchers == len(game.pitchers) and isCorrect)
 
     def test_extractTrainingExample_raisesExceptionIfInvalidArgument(self):
-        pass
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        with self.assertRaises(Exception) as ctx:
+            ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, '', team_away,
+                                         team_home, 2015)
+
+        self.assertIsInstance(ctx.exception, ValueError)
 
 if __name__ == "__main__":
     unittest.main()
