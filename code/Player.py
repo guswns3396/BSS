@@ -1,3 +1,6 @@
+NUM_FEATURES_HITTER = 5
+NUM_FEATURES_PITCHER = 7
+
 class Player:
     def __init__(self, name, endpoint):
         self.name = name
