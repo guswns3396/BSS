@@ -62,13 +62,14 @@ def searchForTable(soup, id):
     # in case data is commented out
     if table is None:
         comments = soup.find_all(string=lambda text: isinstance(text, Comment))
-        id = "id=\"" + id + "\""
+        id_str = "id=\"" + id + "\""
 
         for comment in comments:
-            if id in comment:
+            if id_str in comment:
                 table = comment
                 table = table[len("<!--"):-len("-->")].strip()
                 table = BeautifulSoup(table, 'html.parser')
+                table = table.find(id=id)
                 return table
 
         # data not found even in comments:
@@ -323,7 +324,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
     pitchers = []
     # dictionary that maps hitter endpoint to outcome (H_Contribution)
     outcome = {}
-    # look at batting results of away team
+    # look at batting results
     table_results_batting = searchForTable(soup, extractTeamID(team_batting) + 'batting')
     endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
     for endpoint_player in endpoints_player:
@@ -334,7 +335,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
         hitters_stats[endpoint_player].updateStats(data_performance)
         # ground truth
         outcome[endpoint_player] = extractHitterOutcome(table_results_batting, endpoint_player)
-    # look at pitching results of home team
+    # look at pitching results
     table_results_pitching = searchForTable(soup, extractTeamID(team_pitching) + 'pitching')
     endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
     for endpoint_player in endpoints_player:
