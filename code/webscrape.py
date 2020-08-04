@@ -122,7 +122,10 @@ def extractHitterOutcome(table, endpoint_player):
         h_total = int(h_total)
     
     # calculate contribution
-    h_contribution = h / h_total
+    if h_total == 0:
+        h_contribution = 0
+    else:
+        h_contribution = h / h_total
     return h_contribution
 
 def extractPlayerName(div):
