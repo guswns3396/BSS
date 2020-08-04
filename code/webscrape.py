@@ -409,9 +409,11 @@ def extractTrainingSet(year_start, year_end, csv_filename):
             headers = []
             headers.append('game_id')
             for i in range(26):
-                headers.append('hitter' + str(i))
+                for j in range(5):
+                    headers.append('hitter' + str(i) + '_feature' + str(j))
             for i in range(13):
-                headers.append('pitcher' + str(i))
+                for j in range(7):
+                    headers.append('pitcher' + str(i) + '_feature' + str(j))
             for i in range(26):
                 headers.append('outcome' + str(i))
             print(','.join(headers), file=f)
