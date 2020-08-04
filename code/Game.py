@@ -37,7 +37,7 @@ class Game:
             row.append(hitter.SO)
             row.append(hitter.R)
             row.append(hitter.L)
-            row_end.append(self.outcome[hitter])
+            row_end.append(self.outcome[hitter.endpoint])
             i += 1
         while i < MAX_HITTERS:
             for j in range(NUM_FEATURES_HITTER):
@@ -59,4 +59,6 @@ class Game:
                 row.append(0)
             i += 1
         row.extend(row_end)
+        for i in range(len(row)):
+            row[i] = str(row[i])
         return ','.join(row)
