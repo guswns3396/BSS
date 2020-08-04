@@ -256,7 +256,6 @@ def extractPlayerGamePerformance(table_results, endpoint_player, type):
     :return: dict containing player's performance in the game (stats / data)
     """
     data = {}
-    data_list = []
     a = table_results.find(attrs={'href': endpoint_player})
     tr = a.find_parent("tr")
     if type == 'hitter':
