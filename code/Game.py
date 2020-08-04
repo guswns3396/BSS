@@ -1,3 +1,5 @@
+from code.Player import NUM_FEATURES_PITCHER, NUM_FEATURES_HITTER
+
 MAX_HITTERS = 26
 MAX_PITCHERS = 13
 
@@ -26,6 +28,7 @@ class Game:
 
     def __str__(self):
         row = []
+        row_end = []
         row.append(self.id)
         i = 0
         for hitter in self.hitters:
@@ -34,13 +37,12 @@ class Game:
             row.append(hitter.SO)
             row.append(hitter.R)
             row.append(hitter.L)
+            row_end.append(self.outcome[hitter])
             i += 1
         while i < MAX_HITTERS:
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
+            for j in range(NUM_FEATURES_HITTER):
+                row.append(0)
+            row_end.append(0)
             i += 1
         i = 0
         for pitcher in self.pitchers:
@@ -53,12 +55,8 @@ class Game:
             row.append(pitcher.L)
             i += 1
         while i < MAX_PITCHERS:
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
-            row.append(0)
+            for j in range(NUM_FEATURES_PITCHER):
+                row.append(0)
             i += 1
+        row.extend(row_end)
         return ','.join(row)
