@@ -219,7 +219,7 @@ class TestWebscrape(unittest.TestCase):
         self.assertEqual(expected, output)
 
     def test_extractSeasonStatsFromTable_raisesExceptionIfInvalidArgument(self):
-        table = ws.BeautifulSoup("")
+        table = ws.BeautifulSoup("", 'html.parser')
 
         with self.assertRaises(Exception) as ctx:
             output = ws.extractSeasonStatsFromTable(table, '', 2010)
@@ -375,9 +375,80 @@ class TestWebscrape(unittest.TestCase):
         player_stats = {}
         endpoint_player = "/players/w/wainwad01.shtml"
 
-        output = ws.extractPlayerCareerStats(endpoint_player, player_stats, 'pitcher', 2015)
+        ws.extractPlayerCareerStats(endpoint_player, player_stats, 'pitcher', 2015)
 
         self.assertTrue(endpoint_player in player_stats)
+
+    def test_extractTrainingExample_updatesHittersStats_firstGame(self):
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home,2015)
+
+        expected = ws.Hitter('Matt Carpenter', '/players/c/carpema01.shtml', 709 + 5, 162 + 2, 111, 0, 1)
+        self.assertEqual(expected, hitters_stats['/players/c/carpema01.shtml'])
+
+    def test_extractTrainingExample_updatesPitchersStats_firstGame(self):
+        endpoint_game = "/boxes/CHN/CHN201504050.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'away', team_away,
+                                         team_home, 2015)
+
+        expected = ws.Pitcher('Phil Coke', '/players/c/cokeph01.shtml', 0, 58 + .2, 69, 41 + 2, 257 + 3, 0, 1)
+        self.assertEqual(expected, pitchers_stats['/players/c/cokeph01.shtml'])
+
+    def test_extractTrainingExample_updatesHittersStats_notFirstGame(self):
+        endpoint_game = "/boxes/CHN/CHN201504080.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {'/players/c/carpema01.shtml':
+                             ws.Hitter('Matt Carpenter', '/players/c/carpema01.shtml', 714, 164, 111, 0, 1)}
+        pitchers_stats = {}
+
+        game = ws.extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home,2015)
+
+        expected = ws.Hitter('Matt Carpenter', '/players/c/carpema01.shtml', 714 + 4, 164, 111 + 2, 0, 1)
+        self.assertEqual(expected, hitters_stats['/players/c/carpema01.shtml'])
+
+    def test_extractTrainingExample_updatesPitchersStats_notFirstGame(self):
+        endpoint_game = "/boxes/CHN/CHN201504080.shtml"
+        page = ws.requests.get(ws.URL + endpoint_game)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        team_away, team_home = ws.extractTeams(soup)
+        hitters_stats = {}
+        pitchers_stats = {'/players/c/cokeph01.shtml':
+                              ws.Pitcher('Phil Coke', '/players/c/cokeph01.shtml', 0, 58 + .2, 69, 41 + 2, 257 + 3, 0, 1)}
+
+        game = ws.extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, 'away', team_away,
+                                         team_home, 2015)
+
+        expected = ws.Pitcher('Phil Coke', '/players/c/cokeph01.shtml', 0, 58 + .2 + .1, 69 + 1, 41 + 2 + 1, 257 + 3 + 2, 0, 1)
+        self.assertEqual(expected, pitchers_stats['/players/c/cokeph01.shtml'])
+
+    def test_extractTrainingExample_makesDeepCopyHitters(self):
+        pass
+
+    def test_extractTrainingExample_makesDeepCopyPitchers(self):
+        pass
+
+    def test_extractTrainingExample_instantiatesGameHome(self):
+        pass
+
+    def test_extractTrainingExample_instantiatesGameAway(self):
+        pass
+
+    def test_extractTrainingExample_raisesExceptionIfInvalidArgument(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main()
