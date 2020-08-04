@@ -537,9 +537,14 @@ class TestWebscrape(unittest.TestCase):
         self.assertIsInstance(ctx.exception, ValueError)
 
     def test_extractTrainingSet_extractsAllGames(self):
-        games = ws.extractTrainingSet(2015, 2015, 'games.csv')
+        ws.extractTrainingSet(2015, 2015, 'games.csv')
 
         expected = 2465 * 2
+
+        with open('games.csv','r') as f:
+            rows = sum(1 for row in f)
+
+        self.assertEqual(expected + 1, rows)
 
 if __name__ == "__main__":
     unittest.main()
