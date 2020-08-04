@@ -107,11 +107,21 @@ def extractHitterOutcome(table, endpoint_player):
     # find player's hits
     a = table.find(attrs={'href': endpoint_player})
     tr = a.find_parent("tr")
-    h = int(tr.find(attrs={"data-stat":"H"}).string)
+    h = tr.find(attrs={"data-stat":"H"}).string
+    # in case None
+    if h is None:
+        h = 0
+    else:
+        h = int(h)
 
     # find team's total hits
     th = table.find(string="Team Totals").parent
-    h_total = int(th.find_next_sibling(attrs={"data-stat":"H"}).string)
+    h_total = th.find_next_sibling(attrs={"data-stat":"H"}).string
+    # in case None, avoid divide by zero
+    if h_total is None:
+        h_total = -1
+    else:
+        h_total = int(h_total)
     
     # calculate contribution
     h_contribution = h / h_total
