@@ -1,4 +1,5 @@
 import requests
+import copy
 from code.Player import Hitter, Pitcher
 from code.Game import Game
 from bs4 import BeautifulSoup
@@ -59,7 +60,7 @@ def searchForTable(soup, id):
     """
     table = soup.find(id=id)
     # in case data is commented out
-    if table == None:
+    if table is None:
         comments = soup.find_all(string=lambda text: isinstance(text, Comment))
         id = "id=\"" + id + "\""
 
@@ -171,10 +172,10 @@ def extractSeasonStatsFromTable(table, type, year):
         h = 0
         so = 0
         # table found
-        if table != None:
+        if table is not None:
             tr = table.find(id="batting_standard." + str(year))
             # year found
-            if tr != None:
+            if tr is not None:
                 pa = int(tr.find(attrs={'data-stat': 'PA'}).string)
                 h = int(tr.find(attrs={'data-stat': 'H'}).string)
                 so = int(tr.find(attrs={'data-stat': 'SO'}).string)
@@ -190,10 +191,10 @@ def extractSeasonStatsFromTable(table, type, year):
         so = 0
         bf = 0
         # if table found
-        if table != None:
+        if table is not None:
             tr = table.find(id="pitching_standard." + str(year))
             # if year found
-            if tr != None:
+            if tr is not None:
                 sho = int(tr.find(attrs={'data-stat': 'SHO'}).string)
                 ip = float(tr.find(attrs={'data-stat': 'IP'}).string)
                 h = int(tr.find(attrs={'data-stat': 'H'}).string)
@@ -303,6 +304,18 @@ def extractPlayerCareerStats(endpoint_player, players_stats, type, year):
     return player
 
 def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, type, team_batting, team_pitching, year):
+    """
+    extracts Game object as training example for a given game
+    :param endpoint_game: endpoint to game
+    :param hitters_stats: dict of running total stats of all hitters (pre-game)
+    :param pitchers_stats: dict of running total stats of all pitchers (pre-game)
+    :param soup: soup object of game page
+    :param type: 'away' or 'home'
+    :param team_batting: name of batting team
+    :param team_pitching: name of pitching team
+    :param year: year of season
+    :return: Game object
+    """
     if type != 'away' and type != 'home':
         raise ValueError("argument 'type' must either be 'away' or 'home'")
     # list of Player objects for input
@@ -315,7 +328,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
     endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
     for endpoint_player in endpoints_player:
         # get player's stats up until the game & get input for model
-        hitters.append(extractPlayerCareerStats(endpoint_player, hitters_stats, 'hitter', year))
+        hitters.append(copy.deepcopy(extractPlayerCareerStats(endpoint_player, hitters_stats, 'hitter', year)))
         # update player's status according to outcome for input to next game
         data_performance = extractPlayerGamePerformance(table_results_batting, endpoint_player, 'hitter')
         hitters_stats[endpoint_player].updateStats(data_performance)
@@ -326,7 +339,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
     endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
     for endpoint_player in endpoints_player:
         # get player's stats up until the game & get input for model
-        pitchers.append(extractPlayerCareerStats(endpoint_player, pitchers_stats, 'pitcher', year))
+        pitchers.append(copy.deepcopy(extractPlayerCareerStats(endpoint_player, pitchers_stats, 'pitcher', year)))
         # update player's status according to outcome for input to next game
         data_performance = extractPlayerGamePerformance(table_results_pitching, endpoint_player, 'pitcher')
         pitchers_stats[endpoint_player].updateStats(data_performance)
