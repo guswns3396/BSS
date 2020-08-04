@@ -301,6 +301,8 @@ def extractPlayerGamePerformance(table_results, endpoint_player, type):
         runs = tr.find(attrs={'data-stat': 'R'}).string
         if runs is None:
             runs = 0
+        else:
+            runs = int(runs)
         # determine if complete game
         tbody = table_results.find("tbody")
         numPitchers = len(tbody.find_all("tr"))
