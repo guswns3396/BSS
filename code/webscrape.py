@@ -385,33 +385,48 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
     else:
         return Game(endpoint_game + '-H', hitters, pitchers, outcome)
 
-def extractTrainingSet(year_start, year_current):
+def extractTrainingSet(year_start, year_end, csv_filename):
     """
-    extract training examples from given start year to current year
-    instantiate as Game objects
-    return list of Game objects (training set)
-    :return: list of Game objects
+    go through all the games from year_start to year_current (inclusive)
+    then save game objects in csv_file (text)
+    :param year_start: start year
+    :param year_end: end year
+    :param csv_filename: name of csv file the games get saved to
+    :return: None
     """
-    games = []
     # go through all the seasons from start year to current year
     # including current year
-    for year in range(year_start, year_current + 1):
+    for year in range(year_start, year_end + 1):
         # dictionary that maps player endpoint to Player object (stats)
         # for career stats for the whole season (running tally)
         hitters_stats = {}
         pitchers_stats = {}
 
         endpoints_game = extractGamesFromSeason(year)
-        # go through all games in the given year
-        for endpoint_game in endpoints_game:
-            print(endpoint_game)
-            page = requests.get(URL + endpoint_game)
-            soup = BeautifulSoup(page.content, 'html.parser')
-            team_away, team_home = extractTeams(soup)
+        # open file for writing
+        with open(csv_filename, 'w') as f:
+            # write in headers
+            headers = []
+            headers.append('game_id')
+            for i in range(26):
+                headers.append('hitter' + str(i))
+            for i in range(13):
+                headers.append('pitcher' + str(i))
+            for i in range(26):
+                headers.append('outcome' + str(i))
+            print(','.join(headers), file=f)
+            # go through all games in the given year
+            for endpoint_game in endpoints_game:
+                print(endpoint_game)
+                page = requests.get(URL + endpoint_game)
+                soup = BeautifulSoup(page.content, 'html.parser')
+                team_away, team_home = extractTeams(soup)
 
-            ## Training Example for Away Team ##
-            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home,year))
-            ## Training Example for Home Team ##
-            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'home',team_home,team_away,year))
+                ## Training Example for Away Team ##
+                game = extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home,year)
+                print(game, file=f)
+                ## Training Example for Home Team ##
+                game = extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'home',team_home,team_away,year)
+                print(game, file=f)
 
-    return games
+    return None
