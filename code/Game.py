@@ -1,5 +1,3 @@
-import code.Player as Player
-
 MAX_HITTERS = 26
 MAX_PITCHERS = 13
 
