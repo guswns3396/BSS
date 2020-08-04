@@ -1,7 +1,7 @@
 import requests
 import copy
-from code.Player import Hitter, Pitcher
-from code.Game import Game
+from code.Player import Hitter, Pitcher, NUM_FEATURES_HITTER, NUM_FEATURES_PITCHER
+from code.Game import Game, MAX_HITTERS, MAX_PITCHERS
 from bs4 import BeautifulSoup
 from bs4 import Comment
 
@@ -408,13 +408,13 @@ def extractTrainingSet(year_start, year_end, csv_filename):
             # write in headers
             headers = []
             headers.append('game_id')
-            for i in range(26):
-                for j in range(5):
+            for i in range(MAX_HITTERS):
+                for j in range(NUM_FEATURES_HITTER):
                     headers.append('hitter' + str(i) + '_feature' + str(j))
-            for i in range(13):
-                for j in range(7):
+            for i in range(MAX_PITCHERS):
+                for j in range(NUM_FEATURES_PITCHER):
                     headers.append('pitcher' + str(i) + '_feature' + str(j))
-            for i in range(26):
+            for i in range(MAX_HITTERS):
                 headers.append('outcome' + str(i))
             print(','.join(headers), file=f)
             # go through all games in the given year
