@@ -256,19 +256,36 @@ def extractPlayerGamePerformance(table_results, endpoint_player, type):
     :return: dict containing player's performance in the game (stats / data)
     """
     data = {}
+    data_list = []
     a = table_results.find(attrs={'href': endpoint_player})
     tr = a.find_parent("tr")
     if type == 'hitter':
-        data['PA'] = int(tr.find(attrs={'data-stat': 'PA'}).string)
-        data['H'] = int(tr.find(attrs={'data-stat': 'H'}).string)
-        data['SO'] = int(tr.find(attrs={'data-stat': 'SO'}).string)
+        data['PA'] = tr.find(attrs={'data-stat': 'PA'}).string
+        data['H'] = tr.find(attrs={'data-stat': 'H'}).string
+        data['SO'] = tr.find(attrs={'data-stat': 'SO'}).string
+        # in case None
+        for stat in data:
+            if data[stat] is None:
+                data[stat] = 0
+            else:
+                data[stat] = int(data[stat])
     elif type == 'pitcher':
-        data['IP'] = float(tr.find(attrs={'data-stat': 'IP'}).string)
-        data['H'] = int(tr.find(attrs={'data-stat': 'H'}).string)
-        data['SO'] = int(tr.find(attrs={'data-stat': 'SO'}).string)
-        data['BF'] = int(tr.find(attrs={'data-stat': 'batters_faced'}).string)
+        data['IP'] = tr.find(attrs={'data-stat': 'IP'}).string
+        data['H'] = tr.find(attrs={'data-stat': 'H'}).string
+        data['SO'] = tr.find(attrs={'data-stat': 'SO'}).string
+        data['BF'] = tr.find(attrs={'data-stat': 'batters_faced'}).string
+        # in case None
+        for stat in data:
+            if data[stat] is None:
+                data[stat] = 0
+            elif stat == 'IP':
+                data[stat] = float(data[stat])
+            else:
+                data[stat] = int(data[stat])
         # determine shutout
-        runs = int(tr.find(attrs={'data-stat': 'R'}).string)
+        runs = tr.find(attrs={'data-stat': 'R'}).string
+        if runs is None:
+            runs = 0
         # determine if complete game
         tbody = table_results.find("tbody")
         numPitchers = len(tbody.find_all("tr"))
