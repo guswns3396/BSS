@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(1,'../')
 import unittest
 from code import webscrape as ws
 
