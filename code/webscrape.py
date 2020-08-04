@@ -180,43 +180,49 @@ def extractSeasonStatsFromTable(table, type, year):
     data = {}
     if type == "hitter":
         # default values
-        pa = 0
-        h = 0
-        so = 0
+        data['PA'] = 0
+        data['H'] = 0
+        data['SO'] = 0
         # table found
         if table is not None:
             tr = table.find(id="batting_standard." + str(year))
             # year found
             if tr is not None:
-                pa = int(tr.find(attrs={'data-stat': 'PA'}).string)
-                h = int(tr.find(attrs={'data-stat': 'H'}).string)
-                so = int(tr.find(attrs={'data-stat': 'SO'}).string)
-        data['PA'] = pa
-        data['H'] = h
-        data['SO'] = so
+                data['PA'] = tr.find(attrs={'data-stat': 'PA'}).string
+                data['H'] = tr.find(attrs={'data-stat': 'H'}).string
+                data['SO'] = tr.find(attrs={'data-stat': 'SO'}).string
+                # in case None
+                for stat in data:
+                    if data[stat] is None:
+                        data[stat] = 0
+                    else:
+                        data[stat] = int(data[stat])
         return data
     elif type == "pitcher":
         # default values
-        sho = 0
-        ip = 0
-        h = 0
-        so = 0
-        bf = 0
+        data['SHO'] = 0
+        data['IP'] = 0
+        data['H'] = 0
+        data['SO'] = 0
+        data['BF'] = 0
         # if table found
         if table is not None:
             tr = table.find(id="pitching_standard." + str(year))
             # if year found
             if tr is not None:
-                sho = int(tr.find(attrs={'data-stat': 'SHO'}).string)
-                ip = float(tr.find(attrs={'data-stat': 'IP'}).string)
-                h = int(tr.find(attrs={'data-stat': 'H'}).string)
-                so = int(tr.find(attrs={'data-stat': 'SO'}).string)
-                bf = int(tr.find(attrs={'data-stat': 'batters_faced'}).string)
-        data['SHO'] = sho
-        data['IP'] = ip
-        data['H'] = h
-        data['SO'] = so
-        data['BF'] = bf
+                data['SHO'] = tr.find(attrs={'data-stat': 'SHO'}).string
+                data['IP'] = tr.find(attrs={'data-stat': 'IP'}).string
+                data['H'] = tr.find(attrs={'data-stat': 'H'}).string
+                data['SO'] = tr.find(attrs={'data-stat': 'SO'}).string
+                data['BF'] = tr.find(attrs={'data-stat': 'batters_faced'}).string
+                # in case None
+                for stat in data:
+                    if data[stat] is None:
+                        data[stat] = 0
+                    elif stat == 'IP':
+                        data[stat] = float(data[stat])
+                    else:
+                        data[stat] = int(data[stat])
         return data
     else:
         raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
