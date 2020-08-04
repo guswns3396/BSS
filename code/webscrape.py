@@ -91,7 +91,8 @@ def extractPlayerEndpointsFromTable(table):
     for tr in trs:
         th = tr.select("th[data-stat='player']")[0]
         a = th.find("a")
-        endpoints.append(a['href'])
+        if a is not None:
+            endpoints.append(a['href'])
 
     return endpoints
 
@@ -369,13 +370,14 @@ def extractTrainingSet(year_start, year_current):
         endpoints_game = extractGamesFromSeason(year)
         # go through all games in the given year
         for endpoint_game in endpoints_game:
+            print(endpoint_game)
             page = requests.get(URL + endpoint_game)
             soup = BeautifulSoup(page.content, 'html.parser')
             team_away, team_home = extractTeams(soup)
 
             ## Training Example for Away Team ##
-            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home))
+            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'away',team_away,team_home,year))
             ## Training Example for Home Team ##
-            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'home',team_home,team_away))
+            games.append(extractTrainingExample(endpoint_game,hitters_stats,pitchers_stats,soup,'home',team_home,team_away,year))
 
     return games
