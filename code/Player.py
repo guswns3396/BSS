@@ -35,6 +35,9 @@ class Hitter(Player):
         else:
             return False
 
+    def __str__(self):
+        return "%s %s %s %s %s" % (self.PA, self.H, self.SO, self.R, self.L)
+
     def updateStats(self, data):
         self.PA += data['PA']
         self.H += data['H']
@@ -75,6 +78,9 @@ class Pitcher(Player):
             return True
         else:
             return False
+
+    def __str__(self):
+        return "%s %s %s %s %s %s %s" % (self.SHO, self.IP, self.H, self.SO, self.BF, self.R, self.L)
 
     def updateStats(self, data):
         self.SHO += data['SHO']
