@@ -41,7 +41,7 @@ class Game:
             i += 1
         while i < MAX_HITTERS:
             for j in range(NUM_FEATURES_HITTER):
-                row.append(0)
+                row.append(-1)
             row_end.append(0)
             i += 1
         i = 0
@@ -56,7 +56,7 @@ class Game:
             i += 1
         while i < MAX_PITCHERS:
             for j in range(NUM_FEATURES_PITCHER):
-                row.append(0)
+                row.append(-1)
             i += 1
         row.extend(row_end)
         for i in range(len(row)):
