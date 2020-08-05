@@ -1,13 +1,6 @@
 import unittest
 import copy
-
-import sys
-import pathlib
-path_dir = pathlib.Path(__file__).parent.absolute()
-path_repo = path_dir.parent.absolute()
-sys.path.insert(1, path_repo)
-
-import code.Player
+import code.Player as Player
 
 class TestPlayer(unittest.TestCase):
     def test_constructor_constructsHitter(self):
