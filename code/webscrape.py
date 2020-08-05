@@ -1,9 +1,16 @@
 import requests
 import copy
-from Player import Hitter, Pitcher, NUM_FEATURES_HITTER, NUM_FEATURES_PITCHER
-from Game import Game, MAX_HITTERS, MAX_PITCHERS
 from bs4 import BeautifulSoup
 from bs4 import Comment
+
+import sys
+import pathlib
+path_dir = pathlib.Path(__file__).parent.absolute()
+path_repo = path_dir.parent.absolute()
+sys.path.insert(1, path_repo)
+
+from code.Player import Hitter, Pitcher, NUM_FEATURES_HITTER, NUM_FEATURES_PITCHER
+from code.Game import Game, MAX_HITTERS, MAX_PITCHERS
 
 URL = 'https://www.baseball-reference.com'
 

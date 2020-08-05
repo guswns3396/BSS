@@ -1,5 +1,12 @@
 import unittest
 import copy
+
+import sys
+import pathlib
+path_dir = pathlib.Path(__file__).parent.absolute()
+path_repo = path_dir.parent.absolute()
+sys.path.insert(1, path_repo)
+
 from code import Player
 
 class TestPlayer(unittest.TestCase):

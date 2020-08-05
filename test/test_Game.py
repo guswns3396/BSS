@@ -1,6 +1,13 @@
 import unittest
 from io import StringIO
 from unittest.mock import patch
+
+import sys
+import pathlib
+path_dir = pathlib.Path(__file__).parent.absolute()
+path_repo = path_dir.parent.absolute()
+sys.path.insert(1, path_repo)
+
 from code.Game import *
 from code.Player import Hitter, Pitcher
 
