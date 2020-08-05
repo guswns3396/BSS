@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output',
                         action='store',
                         metavar='FILENAME',
-                        default='games.csv',
+                        default='training_set.csv',
                         dest='filename',
                         help='Name of file to output after gathering data')
 
@@ -28,3 +28,4 @@ if __name__ == "__main__":
     group.add_argument('-i', '--inference', help='Run inference')
 
     args = vars(parser.parse_args())
+    main(args)
