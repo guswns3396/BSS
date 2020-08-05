@@ -4,7 +4,7 @@ import code.webscrape as ws
 def main(args):
     # if gather data chosen
     if args['years']:
-        pass
+        ws.extractTrainingSet(args['years'][0], args['years'][1], args['filename'])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run BSS')
