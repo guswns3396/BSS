@@ -7,7 +7,7 @@ path_dir = pathlib.Path(__file__).parent.absolute()
 path_repo = path_dir.parent.absolute()
 sys.path.insert(1, path_repo)
 
-from code import Player
+import Player
 
 class TestPlayer(unittest.TestCase):
     def test_constructor_constructsHitter(self):

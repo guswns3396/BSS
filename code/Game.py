@@ -4,7 +4,7 @@ path_dir = pathlib.Path(__file__).parent.absolute()
 path_repo = path_dir.parent.absolute()
 sys.path.insert(1, path_repo)
 
-from code.Player import NUM_FEATURES_PITCHER, NUM_FEATURES_HITTER
+from Player import NUM_FEATURES_PITCHER, NUM_FEATURES_HITTER
 
 MAX_HITTERS = 26
 MAX_PITCHERS = 13
