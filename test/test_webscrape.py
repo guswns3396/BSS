@@ -6,7 +6,7 @@ path_dir = pathlib.Path(__file__).parent.absolute()
 path_repo = path_dir.parent.absolute()
 sys.path.insert(1, path_repo)
 
-import webscrape as ws
+import code.webscrape as ws
 
 class TestWebscrape(unittest.TestCase):
     def test_extractGamesFromSeason_extractsAllEndpoints(self):
