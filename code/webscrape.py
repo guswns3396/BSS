@@ -1,7 +1,7 @@
 import requests
 import copy
-from Player import Hitter, Pitcher, NUM_FEATURES_HITTER, NUM_FEATURES_PITCHER
-from Game import Game, MAX_HITTERS, MAX_PITCHERS
+from .Player import Hitter, Pitcher, NUM_FEATURES_HITTER, NUM_FEATURES_PITCHER
+from .Game import Game, MAX_HITTERS, MAX_PITCHERS
 from bs4 import BeautifulSoup
 from bs4 import Comment
 
