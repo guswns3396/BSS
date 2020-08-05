@@ -1,10 +1,5 @@
-import sys
-import pathlib
-path_test = pathlib.Path(__file__).parent.absolute()
-path_repo = path_test.parent.absolute()
-sys.path.insert(1,str(path_repo) + "/code")
 import unittest
-import webscrape as ws
+import code.webscrape as ws
 
 class TestWebscrape(unittest.TestCase):
     def test_extractGamesFromSeason_extractsAllEndpoints(self):

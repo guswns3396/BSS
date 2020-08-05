@@ -1,6 +1,6 @@
 import unittest
 import copy
-from code import Player
+import code.Player as Player
 
 class TestPlayer(unittest.TestCase):
     def test_constructor_constructsHitter(self):

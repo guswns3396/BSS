@@ -30,10 +30,13 @@ class TestGame(unittest.TestCase):
             output = out.getvalue()
 
         expected = 'id,1,2,3,4,5,6,7,8,9,10,'
-        expected += '0,0,0,0,0,'*24
+        expected += '-1,-1,-1,-1,-1,'*24
         expected += '1,2,3,4,5,6,7,8,9,10,11,12,13,14,'
-        expected += '0,0,0,0,0,0,0,'*11
+        expected += '-1,-1,-1,-1,-1,-1,-1,'*11
         expected += '0.7,0.3,'
         expected += '0,'*24
         expected = expected[:-1] + '\n'
         self.assertEqual(expected, output)
+
+if __name__ == '__main__':
+    unittest.main()
