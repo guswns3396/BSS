@@ -492,7 +492,7 @@ class TestWebscrape(unittest.TestCase):
                                          team_away, 2015)
 
         expected_id = '/boxes/CHN/CHN201504050.shtml-H'
-        expected_len_hitters = 16
+        expected_len_hitters = 11
         expected_len_pitchers = 4
         expected_outcome = {'/players/f/fowlede01.shtml': 1/5,
                             '/players/c/castrst01.shtml': 1/5,
@@ -519,7 +519,7 @@ class TestWebscrape(unittest.TestCase):
                                          team_home, 2015)
 
         expected_id = '/boxes/CHN/CHN201504050.shtml-A'
-        expected_len_hitters = 14
+        expected_len_hitters = 10
         expected_len_pitchers = 6
         expected_outcome = {'/players/c/carpema01.shtml': 2 / 10,
                             '/players/h/heywaja01.shtml': 3 / 10,
