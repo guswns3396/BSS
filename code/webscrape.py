@@ -76,12 +76,16 @@ def searchForTable(soup, id):
     else:
         return table
 
-def extractPlayerEndpointsFromTable(table):
+def extractPlayerEndpointsFromTable(table, type):
     """
-    extracts endpoints of each player from given table
+    extracts endpoints of each player from given table (only if they played)
     :param table: table Tag object
+    :param type: 'hitter' or 'pitcher"
     :return: list of player endpoints
     """
+    if type != 'hitter' and type != 'pitcher':
+        raise ValueError("argument 'type' must either be 'hitter' or 'pitcher'")
+
     endpoints = []
     tbody = table.find("tbody")
     trs = tbody.find_all("tr")
@@ -90,7 +94,20 @@ def extractPlayerEndpointsFromTable(table):
         th = tr.select("th[data-stat='player']")[0]
         a = th.find("a")
         if a is not None:
-            endpoints.append(a['href'])
+            # hitter who played
+            if type == 'hitter':
+                pa = tr.select("td[data-stat='PA']")[0].string
+                if pa is not None:
+                    pa = int(pa)
+                    if pa > 0:
+                        endpoints.append(a['href'])
+            # pitcher who played
+            else:
+                bf = tr.select("td[data-stat='batters_faced']")[0].string
+                if bf is not None:
+                    bf = int(bf)
+                    if bf > 0:
+                        endpoints.append(a['href'])
 
     return endpoints
 
