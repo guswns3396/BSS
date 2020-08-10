@@ -379,7 +379,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
     outcome = {}
     # look at batting results
     table_results_batting = searchForTable(soup, extractTeamID(team_batting) + 'batting')
-    endpoints_player = extractPlayerEndpointsFromTable(table_results_batting)
+    endpoints_player = extractPlayerEndpointsFromTable(table_results_batting, 'hitter')
     for endpoint_player in endpoints_player:
         # get player's stats up until the game & get input for model
         hitters.append(copy.deepcopy(extractPlayerCareerStats(endpoint_player, hitters_stats, 'hitter', year)))
@@ -390,7 +390,7 @@ def extractTrainingExample(endpoint_game, hitters_stats, pitchers_stats, soup, t
         outcome[endpoint_player] = extractHitterOutcome(table_results_batting, endpoint_player)
     # look at pitching results
     table_results_pitching = searchForTable(soup, extractTeamID(team_pitching) + 'pitching')
-    endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching)
+    endpoints_player = extractPlayerEndpointsFromTable(table_results_pitching, 'pitcher')
     for endpoint_player in endpoints_player:
         # get player's stats up until the game & get input for model
         pitchers.append(copy.deepcopy(extractPlayerCareerStats(endpoint_player, pitchers_stats, 'pitcher', year)))
