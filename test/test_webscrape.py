@@ -60,20 +60,37 @@ class TestWebscrape(unittest.TestCase):
         search_id = "StLouisCardinalsbatting"
         table = ws.searchForTable(soup, search_id)
 
-        endpoint_players = ws.extractPlayerEndpointsFromTable(table)
+        endpoint_players = ws.extractPlayerEndpointsFromTable(table, 'hitter')
 
         self.assertEqual("/players/c/carpema01.shtml", endpoint_players[0])
 
-    def test_extractPlayerEndpointsFromTable_extractsAllEndpoints(self):
-        endpoint = "/boxes/CHN/CHN201504050.shtml"
+    def test_extractPlayerEndpointsFromTable_extractsAllEndpointsHitter(self):
+        endpoint = "/boxes/LAN/LAN201509150.shtml"
         page = ws.requests.get(ws.URL + endpoint)
         soup = ws.BeautifulSoup(page.content, 'html.parser')
-        search_id = "StLouisCardinalsbatting"
+        search_id = "ColoradoRockiesbatting"
         table = ws.searchForTable(soup, search_id)
 
-        endpoint_players = ws.extractPlayerEndpointsFromTable(table)
+        endpoint_players = ws.extractPlayerEndpointsFromTable(table, 'hitter')
 
-        self.assertEqual(14, len(endpoint_players))
+        self.assertEqual(15, len(endpoint_players))
+
+    def test_extractPlayerEndpointsFromTable_extractsAllEndpointsPitcher(self):
+        endpoint = "/boxes/LAN/LAN201509150.shtml"
+        page = ws.requests.get(ws.URL + endpoint)
+        soup = ws.BeautifulSoup(page.content, 'html.parser')
+        search_id = "LosAngelesDodgerspitching"
+        table = ws.searchForTable(soup, search_id)
+
+        endpoint_players = ws.extractPlayerEndpointsFromTable(table, 'pitcher')
+
+        self.assertEqual(11, len(endpoint_players))
+
+    def test_extractPlayerEndpointsFromTable_raisesExceptionIfInvalidArgument(self):
+        with self.assertRaises(Exception) as ctx:
+            ws.extractPlayerEndpointsFromTable('','')
+
+        self.assertIsInstance(ctx.exception, ValueError)
 
     def test_extractHitterOutcome_extractsCorrectOutcome(self):
         endpoint = "/boxes/CHN/CHN201504050.shtml"
@@ -475,7 +492,7 @@ class TestWebscrape(unittest.TestCase):
                                          team_away, 2015)
 
         expected_id = '/boxes/CHN/CHN201504050.shtml-H'
-        expected_len_hitters = 16
+        expected_len_hitters = 11
         expected_len_pitchers = 4
         expected_outcome = {'/players/f/fowlede01.shtml': 1/5,
                             '/players/c/castrst01.shtml': 1/5,
@@ -502,7 +519,7 @@ class TestWebscrape(unittest.TestCase):
                                          team_home, 2015)
 
         expected_id = '/boxes/CHN/CHN201504050.shtml-A'
-        expected_len_hitters = 14
+        expected_len_hitters = 10
         expected_len_pitchers = 6
         expected_outcome = {'/players/c/carpema01.shtml': 2 / 10,
                             '/players/h/heywaja01.shtml': 3 / 10,
